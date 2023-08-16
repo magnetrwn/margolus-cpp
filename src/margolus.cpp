@@ -1,38 +1,7 @@
-#include <iostream>
-#include <deque>
-#include <random>
-#include <algorithm>
-#include <stdexcept>
+#include "margolus.hpp"
 
-#include <unistd.h>
 
-#define MAX_SCREEN_ANY 512
-#define DEFAULT_WIDTH 36
-#define DEFAULT_HEIGHT 14
-
-class Critters {
-private:
-    const size_t width_, height_;
-
-    std::deque<std::deque<bool>> grid;
-    size_t offset;
-
-    std::mt19937 mt;
-    std::bernoulli_distribution noisefn;
-
-public:
-    Critters(size_t width, size_t height);
-
-    enum stepDirection { FORWARD, BACKWARD };
-    void step(stepDirection move = FORWARD);
-
-    enum fillState { UP, DOWN, TOGGLE, NOISE, NOISE_TOGGLE };
-    void fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState state, double noise = 0.5);
-
-    void render() const;
-};
-
-Critters::Critters(size_t width, size_t height)
+Margolus::Margolus(size_t width, size_t height)
     : width_(width), height_(height), mt(static_cast<ulong>(time(nullptr))) {
 
     grid.resize(height_);
@@ -44,13 +13,19 @@ Critters::Critters(size_t width, size_t height)
     fillRect(0, 0, width_ - 1, height_ - 1, DOWN);
 }
 
-void Critters::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState state, double noise) {
+void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState state, double noise) {
     if (x1 > x2)
         std::swap(x1, x2);
     if (y1 > y2)
         std::swap(y1, y2);
-    if (x2 >= width_ or y2 >= height_)
-        std::runtime_error("Fill coordinates out of bounds.");
+
+    x2 += 1;
+    y2 += 1;
+
+    if (x2 >= width_ or y2 >= height_) {
+        x2 = width_ - 1;
+        y2 = height_ - 1;
+    }
 
     for (size_t i = y1; i < y2; i++)
         for (size_t j = x1; j < x2; j++)
@@ -76,7 +51,7 @@ void Critters::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState st
             }
 }
 
-void Critters::step(stepDirection move) {
+void Margolus::step(stepDirection move) {
     for (size_t s = 0; s < 2; s++) {
         bool active[4];
         size_t activeSum;
@@ -122,7 +97,7 @@ void Critters::step(stepDirection move) {
     }
 }
 
-void Critters::render() const {
+void Margolus::render() const {
     size_t up = 0, down = 0;
     for (size_t i = 0; i < height_; i++) {
         for (size_t j = 0; j < width_; j++) {
@@ -137,43 +112,4 @@ void Critters::render() const {
         std::cout << std::endl;
     }
     std::cout << "\x1B[97;01m" << up << " \x1B[0m\x1B[90m" << down << std::endl;
-}
-
-int main(int argc, char **argv) {
-    size_t width, height;
-    if (argc == 1) {
-        width = DEFAULT_WIDTH;
-        height = DEFAULT_HEIGHT;
-    } else if (argc == 3) {
-        width = std::stoul(std::string(argv[1]));
-        height = std::stoul(std::string(argv[2]));
-        if (width > MAX_SCREEN_ANY or height > MAX_SCREEN_ANY)
-            throw std::runtime_error("Width and/or height too big.");
-        if (width % 2 != 0 or height % 2 != 0 or width < 2 or height < 2)
-            throw std::runtime_error("Width and/or height is small or not an even number.");
-    } else
-        throw std::runtime_error("Invalid width and/or height of the grid.");
-
-    Critters crt(width, height);
-
-    crt.fillRect(2, 2, width - 2, height - 2, Critters::UP);
-
-    while (true) {
-        std::cout << "\033[2J\033[H";
-        crt.render();
-        usleep(500000);
-        for (size_t q = 0; q < 30; q++) {
-            std::cout << "\033[2J\033[H";
-            crt.step(Critters::FORWARD);
-            crt.render();
-            usleep(1000 * 75);
-        }
-        for (size_t q = 0; q < 30; q++) {
-            std::cout << "\033[2J\033[H";
-            crt.step(Critters::BACKWARD);
-            crt.render();
-            usleep(1000 * 75);
-        }
-    }
-    return 0;
 }
