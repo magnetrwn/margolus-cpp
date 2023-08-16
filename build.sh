@@ -11,4 +11,4 @@ zip -r "cpp-margolus.zip" .
 mv cpp-margolus.zip ../cpp-margolus.zip
 
 echo
-echo "\x1B[96mA build zip \"cpp-margolus.zip\" has been saved in project root, and an executable is ready in \"build/\".\x1B[0m"
+printf "\x1B[96mA build zip \"cpp-margolus.zip\" has been saved in project root, and an executable is ready in \"build/\".\x1B[0m"
