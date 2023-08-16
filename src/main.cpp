@@ -1,6 +1,8 @@
+#include <iostream>
 #include <unistd.h>
 
 #include "margolus.hpp"
+#include "render.hpp"
 
 
 int main(int argc, char **argv) {
@@ -23,12 +25,12 @@ int main(int argc, char **argv) {
 
     while (true) {
         std::cout << "\033[2J\033[H";
-        crt.render();
+        RenderGrid::basicANSI(crt.getGrid());
         usleep(1000 * 650);
         for (size_t q = 0; q < 50; q++) {
             std::cout << "\033[2J\033[H";
             crt.step(Margolus::FORWARD);
-            crt.render();
+            RenderGrid::basicANSI(crt.getGrid());
             usleep(1000 * 75);
         }
         crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE_TOGGLE, 0.875);

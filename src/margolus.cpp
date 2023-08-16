@@ -2,7 +2,7 @@
 
 
 Margolus::Margolus(size_t width, size_t height)
-    : width_(width), height_(height), mt(static_cast<ulong>(time(nullptr))) {
+    : width_(width), height_(height), mt(static_cast<ulong>(std::time(nullptr))) {
 
     grid.resize(height_);
     for (size_t i = 0; i < height_; i++)
@@ -11,6 +11,10 @@ Margolus::Margolus(size_t width, size_t height)
     offset = 0;
 
     fillRect(0, 0, width_ - 1, height_ - 1, DOWN);
+}
+
+const std::deque<std::deque<bool>> Margolus::getGrid() const {
+    return grid;
 }
 
 void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState state, double noise) {
@@ -95,21 +99,4 @@ void Margolus::step(stepDirection move) {
         if (move == FORWARD)
             offset = 1 - offset;
     }
-}
-
-void Margolus::render() const {
-    size_t up = 0, down = 0;
-    for (size_t i = 0; i < height_; i++) {
-        for (size_t j = 0; j < width_; j++) {
-            if (grid[i][j]) {
-                std::cout << "\x1B[97;01m$\x1B[0m";
-                up++;
-            } else {
-                std::cout << "\x1B[90m$\x1B[0m";
-                down++;
-            }
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "\x1B[97;01m" << up << " \x1B[0m\x1B[90m" << down << std::endl;
 }
