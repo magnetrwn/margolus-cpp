@@ -21,6 +21,41 @@ int main(int argc, char **argv) {
         throw std::runtime_error("Invalid width and/or height of the grid.");
 
     Margolus crt(width, height);
+
+    // Pulsing cross
+    crt.fillPoint(5, 5, Margolus::UP);
+    crt.fillPoint(6, 6, Margolus::UP);
+    crt.fillPoint(7, 7, Margolus::UP);
+    crt.fillPoint(8, 8, Margolus::UP);
+    crt.fillPoint(8, 5, Margolus::UP);
+    crt.fillPoint(7, 6, Margolus::UP);
+    crt.fillPoint(6, 7, Margolus::UP);
+    crt.fillPoint(5, 8, Margolus::UP);
+
+    // Rising spaceship
+    crt.fillPoint(15, 8, Margolus::UP);
+    crt.fillPoint(16, 7, Margolus::UP);
+    crt.fillPoint(17, 7, Margolus::UP);
+    crt.fillPoint(18, 8, Margolus::UP);
+
+    // Bouncing spaceship
+    crt.fillPoint(23, 5, Margolus::UP);
+    crt.fillPoint(24, 6, Margolus::UP);
+    crt.fillPoint(25, 6, Margolus::UP);
+    crt.fillPoint(26, 5, Margolus::UP);
+
+    // Bounce point
+    crt.fillPoint(28, 12, Margolus::UP);
+    crt.fillPoint(29, 13, Margolus::UP);
+    crt.fillPoint(30, 14, Margolus::UP);
+
+    while (true) {
+        std::cout << "\033[2J\033[H";
+        crt.step(Margolus::FORWARD);
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        usleep(1000 * 75);
+    }
+    /*
     crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE, 0.5);
 
     while (true) {
@@ -35,5 +70,6 @@ int main(int argc, char **argv) {
         }
         crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE_TOGGLE, 0.875);
     }
+    */
     return 0;
 }

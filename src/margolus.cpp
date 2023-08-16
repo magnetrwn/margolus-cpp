@@ -1,8 +1,11 @@
 #include "margolus.hpp"
 
 
-Margolus::Margolus(size_t width, size_t height)
-    : width_(width), height_(height), mt(static_cast<ulong>(std::time(nullptr))) {
+Margolus::Margolus(const size_t width, const size_t height)
+    : width_(width),
+      height_(height),
+      blockTransforms({ROTATE_90_LEFT, INVERT}),
+      mt(static_cast<ulong>(std::time(nullptr))) {
 
     grid.resize(height_);
     for (size_t i = 0; i < height_; i++)
@@ -17,7 +20,11 @@ const std::deque<std::deque<bool>> Margolus::getGrid() const {
     return grid;
 }
 
-void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState state, double noise) {
+bool Margolus::getOffset() const {
+    return (bool) offset % 2;
+}
+
+void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, const fillState state, const double noise) {
     if (x1 > x2)
         std::swap(x1, x2);
     if (y1 > y2)
@@ -55,48 +62,70 @@ void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, fillState st
             }
 }
 
+void Margolus::fillPoint(size_t x1, size_t y1, const fillState state, const double noise) {
+    fillRect(x1, y1, x1, y1, state, noise);
+}
+
 void Margolus::step(stepDirection move) {
-    for (size_t s = 0; s < 2; s++) {
-        bool active[4];
-        size_t activeSum;
+    bool active[4];
+    size_t activeSum;
 
-        if (move == BACKWARD)
-            offset = 1 - offset;
+    if (move == BACKWARD)
+        offset = 1 - offset;
 
-        for (size_t i = 0; i < height_; i += 2) {
-            for (size_t j = 0; j < width_; j += 2) {
-                active[0] = (size_t) grid[(offset + i) % height_][(offset + j) % width_];
-                active[1] = (size_t) grid[(offset + i) % height_][(offset + j + 1) % width_];
-                active[2] = (size_t) grid[(offset + i + 1) % height_][(offset + j) % width_];
-                active[3] = (size_t) grid[(offset + i + 1) % height_][(offset + j + 1) % width_];
+    for (size_t i = 0; i < height_; i += 2) {
+        for (size_t j = 0; j < width_; j += 2) {
+            active[0] = (size_t) grid[(offset + i) % height_][(offset + j) % width_];
+            active[1] = (size_t) grid[(offset + i) % height_][(offset + j + 1) % width_];
+            active[2] = (size_t) grid[(offset + i + 1) % height_][(offset + j) % width_];
+            active[3] = (size_t) grid[(offset + i + 1) % height_][(offset + j + 1) % width_];
 
-                activeSum = (size_t) active[0] + active[1] + active[2] + active[3];
+            activeSum = (size_t) active[0] + active[1] + active[2] + active[3];
 
-                if (activeSum == 3 and move == FORWARD) {
-                    // Turn clockwise
-                    std::swap(active[1], active[3]);
-                    std::swap(active[0], active[1]);
-                    std::swap(active[2], active[0]);
-                }
-
-                if (activeSum == 1 and move == BACKWARD) {
-                    // Turn counter-clockwise
-                    std::swap(active[2], active[0]);
-                    std::swap(active[0], active[1]);
-                    std::swap(active[1], active[3]);
-                }
-
-                if (activeSum != 2) {
-                    // Invert values
-                    grid[(offset + i) % height_][(offset + j) % width_] = !active[0];
-                    grid[(offset + i) % height_][(offset + j + 1) % width_] = !active[1];
-                    grid[(offset + i + 1) % height_][(offset + j) % width_] = !active[2];
-                    grid[(offset + i + 1) % height_][(offset + j + 1) % width_] = !active[3];
-                }
+            if (activeSum == 3 and move == FORWARD) {
+                //rotate90RightBlock(active);
+                rotate180Block(active);
+                invertBlock(active);
             }
-        }
 
-        if (move == FORWARD)
-            offset = 1 - offset;
+            else if (activeSum == 1 and move == BACKWARD) {
+                //rotate90LeftBlock(active);
+                rotate180Block(active);
+                invertBlock(active);
+            }
+
+            else if (activeSum != 2)
+                invertBlock(active);
+
+            grid[(offset + i) % height_][(offset + j) % width_] = active[0];
+            grid[(offset + i) % height_][(offset + j + 1) % width_] = active[1];
+            grid[(offset + i + 1) % height_][(offset + j) % width_] = active[2];
+            grid[(offset + i + 1) % height_][(offset + j + 1) % width_] = active[3];
+        }
     }
+
+    if (move == FORWARD)
+        offset = 1 - offset;
+}
+
+void Margolus::invertBlock(bool block[4]) {
+    for (size_t i = 0; i < 4; i++)
+        block[i] = !block[i];
+}
+
+void Margolus::rotate90LeftBlock(bool block[4]) {
+    std::swap(block[2], block[0]);
+    std::swap(block[0], block[1]);
+    std::swap(block[1], block[3]);
+}
+
+void Margolus::rotate90RightBlock(bool block[4]) {
+    std::swap(block[1], block[3]);
+    std::swap(block[0], block[1]);
+    std::swap(block[2], block[0]);
+}
+
+void Margolus::rotate180Block(bool block[4]) {
+    std::swap(block[0], block[3]);
+    std::swap(block[1], block[2]);
 }

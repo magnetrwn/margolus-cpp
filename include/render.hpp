@@ -7,7 +7,7 @@
 
 class RenderGrid {
 public:
-    static void basicANSI(const std::deque<std::deque<bool>>& grid);
+    static void basicANSI(const std::deque<std::deque<bool>>& grid, bool invert = false);
 };
 
 #endif
