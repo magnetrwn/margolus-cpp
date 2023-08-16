@@ -1,6 +1,5 @@
 #include <iostream>
 #include <deque>
-#include <bitset>
 #include <random>
 #include <algorithm>
 #include <stdexcept>
