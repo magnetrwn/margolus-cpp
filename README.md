@@ -1,5 +1,7 @@
 # Margolus CPP: Reversible cellular automaton simulator
 
+[![CodeFactor](https://www.codefactor.io/repository/github/magnetrwn/margolus-cpp/badge)](https://www.codefactor.io/repository/github/magnetrwn/margolus-cpp)
+
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
 
 ## Asciinema Demo
