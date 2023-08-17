@@ -1,4 +1,4 @@
-/*#include <iostream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <unistd.h>
@@ -93,46 +93,6 @@ int main(int argc, char **argv) {
         demo1(crt);
         demo2(crt);
     }
-
-    return 0;
-}
-*/
-
-#include "margolus.hpp"
-#include "render.hpp"
-#include <iostream>
-
-int main() {
-    // Create a Margolus simulator with a 10x10 grid and specified block transforms
-    std::vector<std::string> transforms = { "INVERT", "ROTATE_90_LEFT", "ROTATE_90_RIGHT", "ROTATE_180" };
-    Margolus margolusSimulator(10, 10, transforms);
-
-    // Fill a rectangular region with random cells
-    margolusSimulator.fillRect(2, 2, 7, 7, Margolus::NOISE, 0.625);
-
-    // Fill a rectangular region with alive cells
-    margolusSimulator.fillRect(3, 3, 6, 6, Margolus::UP);
-
-    // Display the initial grid using the render functionality
-    std::cout << "Initial Grid:" << std::endl;
-    RenderGrid::basicANSI(margolusSimulator.getGrid());
-
-    // Perform 20 forward steps
-    for (size_t i = 0; i < 20; i++)
-        margolusSimulator.step(Margolus::FORWARD);
-
-    // Show current grid
-    std::cout << "Grid after 20 forward steps:" << std::endl;
-    RenderGrid::basicANSI(margolusSimulator.getGrid(), margolusSimulator.getOffset());
-
-    // Perform 20 backward steps
-    for (size_t i = 0; i < 20; i++)
-        margolusSimulator.step(Margolus::BACKWARD);
-
-    // Show current grid
-    std::cout << "Grid after 20 backward steps:" << std::endl;
-    RenderGrid::basicANSI(margolusSimulator.getGrid(), margolusSimulator.getOffset());
-
 
     return 0;
 }
