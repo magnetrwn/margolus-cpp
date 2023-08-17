@@ -35,6 +35,10 @@ const std::deque<std::deque<bool>> Margolus::getGrid() const {
     return grid;
 }
 
+const std::pair<size_t, size_t> Margolus::getSize() const {
+    return std::pair<size_t, size_t>(width_, height_);
+}
+
 bool Margolus::getOffset() const {
     return (bool) offset % 2;
 }

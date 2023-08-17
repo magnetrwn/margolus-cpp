@@ -30,6 +30,7 @@ private:
 public:
     Margolus(const size_t width, const size_t height, const std::vector<std::string>& transforms);
     const std::deque<std::deque<bool>> getGrid() const;
+    const std::pair<size_t, size_t> getSize() const;
     bool getOffset() const;
 
     enum stepDirection { FORWARD, BACKWARD };
