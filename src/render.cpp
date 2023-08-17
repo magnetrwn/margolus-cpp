@@ -14,5 +14,5 @@ void RenderGrid::basicANSI(const std::deque<std::deque<bool>>& grid, bool invert
         }
         std::cout << std::endl;
     }
-    std::cout << "\x1B[97;01m" << up << " \x1B[0m\x1B[90m" << down << std::endl;
+    std::cout << "\x1B[97;01m" << up << " \x1B[0m\x1B[90m" << down << "\x1B[0m" <<  std::endl;
 }
