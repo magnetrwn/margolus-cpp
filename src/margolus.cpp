@@ -1,11 +1,13 @@
 #include "margolus.hpp"
 
 
-Margolus::Margolus(const size_t width, const size_t height)
+Margolus::Margolus(const size_t width, const size_t height, const std::vector<std::string>& transforms)
     : width_(width),
       height_(height),
-      blockTransforms({ROTATE_90_LEFT, INVERT}),
       mt(static_cast<ulong>(std::time(nullptr))) {
+
+    for (std::vector<std::string>::const_iterator it = transforms.begin(); it != transforms.end(); it++)
+        blockTransforms.push_back(parseTransform(*it));
 
     grid.resize(height_);
     for (size_t i = 0; i < height_; i++)
@@ -14,6 +16,19 @@ Margolus::Margolus(const size_t width, const size_t height)
     offset = 0;
 
     fillRect(0, 0, width_ - 1, height_ - 1, DOWN);
+}
+
+Margolus::transform Margolus::parseTransform(const std::string& string) {
+    if (string == "INVERT")
+        return INVERT;
+    else if (string == "ROTATE_90_LEFT")
+        return ROTATE_90_LEFT;
+    else if (string == "ROTATE_90_RIGHT")
+        return ROTATE_90_RIGHT;
+    else if (string == "ROTATE_180")
+        return ROTATE_180;
+    else
+        throw std::runtime_error("Failed to parse transform from string.");
 }
 
 const std::deque<std::deque<bool>> Margolus::getGrid() const {
@@ -66,6 +81,37 @@ void Margolus::fillPoint(size_t x1, size_t y1, const fillState state, const doub
     fillRect(x1, y1, x1, y1, state, noise);
 }
 
+void Margolus::applyTransforms(bool block[4], bool invert) {
+    std::vector<transform>::iterator it =
+        (invert ? std::vector<transform>::iterator(blockTransforms.rbegin().base()) : blockTransforms.begin());
+    std::vector<transform>::iterator endIt =
+        (invert ? std::vector<transform>::iterator(blockTransforms.rend().base()) : blockTransforms.end());
+
+    while (it != endIt) {
+        switch (*it) {
+            case INVERT:
+                invertBlock(block);
+                break;
+            case ROTATE_90_LEFT:
+                if (invert)
+                    rotate90RightBlock(block);
+                else
+                    rotate90LeftBlock(block);
+                break;
+            case ROTATE_90_RIGHT:
+                if (invert)
+                    rotate90LeftBlock(block);
+                else
+                    rotate90RightBlock(block);
+                break;
+            case ROTATE_180:
+                rotate180Block(block);
+                break;
+        }
+        it++;
+    }
+}
+
 void Margolus::step(stepDirection move) {
     bool active[4];
     size_t activeSum;
@@ -81,26 +127,31 @@ void Margolus::step(stepDirection move) {
             active[3] = (size_t) grid[(offset + i + 1) % height_][(offset + j + 1) % width_];
 
             activeSum = (size_t) active[0] + active[1] + active[2] + active[3];
+            bool changed = false;
 
             if (activeSum == 3 and move == FORWARD) {
-                //rotate90RightBlock(active);
-                rotate180Block(active);
+                //rotate180Block(active);
+                //invertBlock(active);
+                applyTransforms(active);
+                changed = true;
+
+            } else if (activeSum == 1 and move == BACKWARD) {
+                //rotate180Block(active);
+                //invertBlock(active);
+                applyTransforms(active, true);
+                changed = true;
+
+            } else if (activeSum != 2) {
                 invertBlock(active);
+                changed = true;
             }
 
-            else if (activeSum == 1 and move == BACKWARD) {
-                //rotate90LeftBlock(active);
-                rotate180Block(active);
-                invertBlock(active);
+            if (changed) {
+                grid[(offset + i) % height_][(offset + j) % width_] = active[0];
+                grid[(offset + i) % height_][(offset + j + 1) % width_] = active[1];
+                grid[(offset + i + 1) % height_][(offset + j) % width_] = active[2];
+                grid[(offset + i + 1) % height_][(offset + j + 1) % width_] = active[3];
             }
-
-            else if (activeSum != 2)
-                invertBlock(active);
-
-            grid[(offset + i) % height_][(offset + j) % width_] = active[0];
-            grid[(offset + i) % height_][(offset + j + 1) % width_] = active[1];
-            grid[(offset + i + 1) % height_][(offset + j) % width_] = active[2];
-            grid[(offset + i + 1) % height_][(offset + j + 1) % width_] = active[3];
         }
     }
 

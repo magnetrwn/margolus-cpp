@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12.0)
-project(cpp-margolus)
+project(margolus)
 
 file(GLOB PROJECT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_FILES})
 add_compile_definitions(-DMAX_SCREEN_ANY=512)
 add_compile_definitions(-DDEFAULT_WIDTH=36)
 add_compile_definitions(-DDEFAULT_HEIGHT=14)
+add_compile_definitions(-DSETTINGS_FILE_PATH=\"margolus.tflist\")
 
 target_include_directories(
     ${PROJECT_NAME}

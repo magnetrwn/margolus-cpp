@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include <unistd.h>
 
 #include "margolus.hpp"
@@ -20,7 +22,8 @@ int main(int argc, char **argv) {
     } else
         throw std::runtime_error("Invalid width and/or height of the grid.");
 
-    Margolus crt(width, height);
+    const std::vector<std::string> transforms = TXTUtil::readTXT(SETTINGS_FILE_PATH);
+    Margolus crt(width, height, transforms);
 
     // Pulsing cross
     crt.fillPoint(5, 5, Margolus::UP);
