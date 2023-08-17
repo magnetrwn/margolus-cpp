@@ -1,6 +1,7 @@
 # Margolus CPP
 
 **Reversible cellular automaton simulator**
+
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
 
 ### Asciinema Demo
