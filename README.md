@@ -1,23 +1,22 @@
-# Margolus CPP
-
-**Reversible cellular automaton simulator**
+# Margolus CPP: Reversible cellular automaton simulator
 
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
 
-### Asciinema Demo
-The following demo shows Margolus CPP running with a Critters ruleset (you can see `demo1()` and `demo2()` in `src/main.cpp`).
+## Asciinema Demo
+The following demo shows Margolus CPP running with a Critters ruleset (you can see `demo1()` and `demo2()` in `src/main.cpp`, alternating every few seconds).
 
 [![asciicast](https://asciinema.org/a/qB18st3xDxeRCZtGxPj10cpAW.svg)](https://asciinema.org/a/qB18st3xDxeRCZtGxPj10cpAW)
 
-### Build
+## Build
 
-To build Margolus CPP on Linux systems, you can just run `./build.sh` from project root. Other platforms such as Windows might require slight modifications, such as in the use of `<unistd.h>` for `usleep()`, which is not my focus at the moment.
+To build Margolus CPP on Linux systems, you can run `./build.sh` from project root.
+Other platforms such as Windows might require slight modifications, such as in the use of `<unistd.h>` for `usleep()`, and will need you to manually run `cmake` inside the build folder.
 
-### Configuration
+## Configuration
 
 At the moment, the only config file is `margolus.tflist`, which contains the transformations list to apply on a block that is found to match a transform condition (for now only three alive cells in a block, but will make configurable soon).
 
-### Usage
+## Usage
 
 Here is a sample program using Margolus CPP.
 
@@ -66,14 +65,14 @@ int main() {
 
 Right now the only renderer is `RenderGrid::basicANSI()`, which will output to STDOUT with nice colors, but other renderers will be added soon (SDL or Cairo sound good, maybe with GTK3 if I feel like it).
 
-### Storing grid to file
+## Storing grid to file
 
 Work in progress...
 
-### Build as command line utility
+## Build as command line utility
 
 Work in progress...
 
-### Build as library
+## Build as library
 
 Work in progress...
