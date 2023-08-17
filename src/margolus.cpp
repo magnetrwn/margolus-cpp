@@ -82,12 +82,7 @@ void Margolus::fillPoint(size_t x1, size_t y1, const fillState state, const doub
 }
 
 void Margolus::applyTransforms(bool block[4], bool invert) {
-    std::vector<transform>::iterator it =
-        (invert ? std::vector<transform>::iterator(blockTransforms.rbegin().base()) : blockTransforms.begin());
-    std::vector<transform>::iterator endIt =
-        (invert ? std::vector<transform>::iterator(blockTransforms.rend().base()) : blockTransforms.end());
-
-    while (it != endIt) {
+    for (std::vector<transform>::iterator it = blockTransforms.begin(); it != blockTransforms.end(); it++) {
         switch (*it) {
             case INVERT:
                 invertBlock(block);
@@ -108,7 +103,6 @@ void Margolus::applyTransforms(bool block[4], bool invert) {
                 rotate180Block(block);
                 break;
         }
-        it++;
     }
 }
 

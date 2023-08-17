@@ -57,6 +57,26 @@ int main(int argc, char **argv) {
         crt.step(Margolus::FORWARD);
         RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
         usleep(1000 * 75);
+        std::cout << "\033[2J\033[H";
+        crt.step(Margolus::FORWARD);
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        usleep(1000 * 75);
+        std::cout << "\033[2J\033[H";
+        crt.step(Margolus::FORWARD);
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        usleep(1000 * 75);
+        std::cout << "\033[2J\033[H";
+        crt.step(Margolus::BACKWARD);
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        usleep(1000 * 75);
+        std::cout << "\033[2J\033[H";
+        crt.step(Margolus::BACKWARD);
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        usleep(1000 * 75);
+        std::cout << "\033[2J\033[H";
+        crt.step(Margolus::BACKWARD);
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        usleep(1000 * 75);
     }
     /*
     crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE, 0.5);
