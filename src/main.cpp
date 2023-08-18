@@ -7,6 +7,8 @@
 #include "render.hpp"
 #include "file.hpp"
 
+#include "popl.hpp"
+
 
 void demo1(Margolus crt) {
     size_t width = crt.getSize().first;
@@ -72,26 +74,59 @@ void demo2(Margolus crt) {
 }
 
 int main(int argc, char **argv) {
+    bool show_help = false, run_demo = false, run_animated = false;
     size_t width, height;
-    if (argc == 1) {
-        width = DEFAULT_WIDTH;
-        height = DEFAULT_HEIGHT;
-    } else if (argc == 3) {
-        width = std::stoul(std::string(argv[1]));
-        height = std::stoul(std::string(argv[2]));
-        if (width > MAX_SCREEN_ANY or height > MAX_SCREEN_ANY)
-            throw std::runtime_error("Width and/or height too big.");
-        if (width % 2 != 0 or height % 2 != 0 or width < 2 or height < 2)
-            throw std::runtime_error("Width and/or height is small or not an even number.");
-    } else
-        throw std::runtime_error("Invalid width and/or height of the grid.");
+    long iter;
+    std::string config_file;
 
-    const std::vector<std::string> transforms = TXTUtil::readTXT(SETTINGS_FILE_PATH);
-    Margolus crt(width, height, transforms);
+    popl::OptionParser options("Available command line options");
+    options.add<popl::Switch>("h", "help", "display help message", &show_help);
+    options.add<popl::Value<size_t>>("W", "width", "horizontal size of the grid", DEFAULT_WIDTH, &width);
+    options.add<popl::Value<size_t>>("H", "height", "vertical size of the grid", DEFAULT_HEIGHT, &height);
+    options.add<popl::Value<long>>("i", "iters", "iterations to run, positive forwards, negative backwards", 0, &iter);
+    options.add<popl::Switch>("a", "animated", "run with a 75ms step animation", &run_animated);
+    options.add<popl::Value<std::string>>("", "config", "location of the config INI file", DEFAULT_CONFIG_FILE, &config_file);
+    options.add<popl::Switch>("", "demo", "run the demo loop", &run_demo);
 
-    while (true) {
-        demo1(crt);
-        demo2(crt);
+    options.parse(argc, argv);
+
+    if (show_help) {
+        std::cout << options << std::endl;
+        return 0;
+    }
+
+    if (run_demo) {
+        Margolus crt(DEFAULT_WIDTH, DEFAULT_HEIGHT, TXTUtil::readTXT(DEFAULT_CONFIG_FILE));
+
+        while (true) {
+            demo1(crt);
+            demo2(crt);
+        }
+
+    } else {
+        Margolus crt(width, height, TXTUtil::readTXT(config_file));
+        crt.fillRect(2, 2, width - 3, height - 3, Margolus::UP, 0.16667);
+        if (iter < 0) {
+            for (long i = 0; i < -iter; i++) {
+                if (run_animated) {
+                    std::cout << "\033[2J\033[H";
+                    RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+                    usleep(1000 * 75);
+                }
+                crt.step(Margolus::BACKWARD);
+            }
+        } else {
+            for (long i = 0; i < iter; i++) {
+                if (run_animated) {
+                    std::cout << "\033[2J\033[H";
+                    RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+                    usleep(1000 * 75);
+                }
+                crt.step(Margolus::FORWARD);
+            }
+        }
+        std::cout << "\033[2J\033[H";
+        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
     }
 
     return 0;
