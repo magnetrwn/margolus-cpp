@@ -1,11 +1,11 @@
-#ifndef RENDER_HEADER_
-#define RENDER_HEADER_
+#ifndef MARGOLUS_RENDER_HEADER_
+#define MARGOLUS_RENDER_HEADER_
 
 #include <iostream>
 #include <deque>
 
 
-class RenderGrid {
+class MargolusRender {
 public:
     static void basicANSI(const std::deque<std::deque<bool>>& grid, bool invert = false);
 };

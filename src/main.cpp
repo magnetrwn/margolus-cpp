@@ -4,8 +4,8 @@
 #include <unistd.h>
 
 #include "margolus.hpp"
-#include "render.hpp"
-#include "file.hpp"
+#include "marg_render.hpp"
+#include "util.hpp"
 
 #include "popl.hpp"
 
@@ -44,7 +44,7 @@ void demo1(Margolus crt) {
     for (size_t q = 0; q < 150; q++) {
         std::cout << "\033[2J\033[H";
         crt.step(Margolus::FORWARD);
-        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
         usleep(1000 * 75);
     }
 
@@ -59,12 +59,12 @@ void demo2(Margolus crt) {
 
     for (size_t p = 0; p < 4; p++) {
         std::cout << "\033[2J\033[H";
-        RenderGrid::basicANSI(crt.getGrid());
+        MargolusRender::basicANSI(crt.getGrid());
         usleep(1000 * 650);
         for (size_t q = 0; q < 50; q++) {
             std::cout << "\033[2J\033[H";
             crt.step(Margolus::FORWARD);
-            RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+            MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
             usleep(1000 * 75);
         }
         crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE_TOGGLE, 0.875);
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
             for (long i = 0; i < -iter; i++) {
                 if (run_animated) {
                     std::cout << "\033[2J\033[H";
-                    RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+                    MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
                     usleep(1000 * 75);
                 }
                 crt.step(Margolus::BACKWARD);
@@ -119,14 +119,14 @@ int main(int argc, char **argv) {
             for (long i = 0; i < iter; i++) {
                 if (run_animated) {
                     std::cout << "\033[2J\033[H";
-                    RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+                    MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
                     usleep(1000 * 75);
                 }
                 crt.step(Margolus::FORWARD);
             }
         }
         std::cout << "\033[2J\033[H";
-        RenderGrid::basicANSI(crt.getGrid(), crt.getOffset());
+        MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
     }
 
     return 0;

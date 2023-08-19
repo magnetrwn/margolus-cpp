@@ -3,7 +3,9 @@ set -e
 
 cd build
 [ -f margolus ] && rm margolus
+export CMAKE_EXPORT_COMPILE_COMMANDS=1
 cmake ..
+mv compile_commands.json ..
 make
 rm -r CMakeFiles cmake_install.cmake CMakeCache.txt Makefile 2> /dev/null
 zip -r "margolus.zip" .

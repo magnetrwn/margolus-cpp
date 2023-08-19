@@ -1,5 +1,5 @@
-#ifndef FILE_HEADER_
-#define FILE_HEADER_
+#ifndef UTIL_HEADER_
+#define UTIL_HEADER_
 
 #include <string>
 #include <vector>
@@ -10,6 +10,7 @@
 class TXTUtil {
 public:
     static std::vector<std::string> readTXT(const std::string &filename);
+    static void writeTXT(const std::string& filename, const std::vector<std::string>& strings);
 };
 
 #endif
