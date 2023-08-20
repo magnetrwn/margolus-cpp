@@ -2,6 +2,8 @@
 
 void MargolusRender::basicANSI(const std::deque<std::deque<bool>>& grid, bool invert) {
     size_t up = 0, down = 0, width = grid[0].size(), height = grid.size();
+
+    std::cout << "\033[2J\033[H";
     for (size_t i = 0; i < height; i++) {
         for (size_t j = 0; j < width; j++) {
             if ((invert and !grid[i][j]) or (!invert and grid[i][j])) {

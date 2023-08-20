@@ -1,0 +1,4 @@
+#ifndef MARGOLUS_RULETOOL_HEADER_
+#define MARGOLUS_RULETOOL_HEADER_
+
+#endif

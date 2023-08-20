@@ -18,7 +18,6 @@ add_executable(${PROJECT_NAME} ${PROJECT_FILES})
 add_compile_definitions(-DMAX_SCREEN_ANY=512)
 add_compile_definitions(-DDEFAULT_WIDTH=36)
 add_compile_definitions(-DDEFAULT_HEIGHT=14)
-add_compile_definitions(-DDEFAULT_CONFIG_FILE=\"margolus.ini\")
 
 target_include_directories(
     ${PROJECT_NAME}

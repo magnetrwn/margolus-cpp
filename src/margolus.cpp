@@ -1,37 +1,30 @@
 #include "margolus.hpp"
 
 
-Margolus::Margolus(const size_t width, const size_t height, const std::vector<std::string>& transforms)
+Margolus::Margolus(const size_t width, const size_t height, const std::array<std::array<bool, 4>, 16>& transforms, const size_t offset)
     : width_(width),
       height_(height),
+      offset_(offset),
+      transforms_(transforms),
       mt(static_cast<ulong>(std::time(nullptr))) {
 
-    for (std::vector<std::string>::const_iterator it = transforms.begin(); it != transforms.end(); it++)
-        blockTransforms.push_back(parseTransform(*it));
+    if (width_ % 2 != 0 or height_ % 2 != 0)
+        throw std::runtime_error("Width and/or height not even.");
+
+    if (width_ < 2 or height_ < 2)
+        throw std::runtime_error("Width and/or height too small.");
+
+    if (width_ > MAX_SCREEN_ANY or height_ > MAX_SCREEN_ANY)
+        throw std::runtime_error("Width and/or height too big.");
 
     grid.resize(height_);
     for (size_t i = 0; i < height_; i++)
         grid[i].resize(width_);
 
-    offset = 0;
-
     fillRect(0, 0, width_ - 1, height_ - 1, DOWN);
 }
 
-Margolus::transform Margolus::parseTransform(const std::string& string) {
-    if (string == "INVERT")
-        return INVERT;
-    else if (string == "ROTATE_90_LEFT")
-        return ROTATE_90_LEFT;
-    else if (string == "ROTATE_90_RIGHT")
-        return ROTATE_90_RIGHT;
-    else if (string == "ROTATE_180")
-        return ROTATE_180;
-    else
-        throw std::runtime_error("Failed to parse transform from string.");
-}
-
-const std::deque<std::deque<bool>> Margolus::getGrid() const {
+const std::deque<std::deque<bool>>& Margolus::getGrid() const {
     return grid;
 }
 
@@ -40,7 +33,7 @@ const std::pair<size_t, size_t> Margolus::getSize() const {
 }
 
 bool Margolus::getOffset() const {
-    return (bool) offset % 2;
+    return (bool) offset_ % 2;
 }
 
 void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, const fillState state, const double noise) {
@@ -85,96 +78,77 @@ void Margolus::fillPoint(size_t x1, size_t y1, const fillState state, const doub
     fillRect(x1, y1, x1, y1, state, noise);
 }
 
-void Margolus::applyTransforms(bool block[4], bool invert) {
-    for (std::vector<transform>::iterator it = blockTransforms.begin(); it != blockTransforms.end(); it++) {
-        switch (*it) {
-            case INVERT:
-                invertBlock(block);
-                break;
-            case ROTATE_90_LEFT:
-                if (invert)
-                    rotate90RightBlock(block);
-                else
-                    rotate90LeftBlock(block);
-                break;
-            case ROTATE_90_RIGHT:
-                if (invert)
-                    rotate90LeftBlock(block);
-                else
-                    rotate90RightBlock(block);
-                break;
-            case ROTATE_180:
-                rotate180Block(block);
-                break;
+void Margolus::applyTransforms(std::array<bool, 4>& block, const bool invert) {
+    static const std::array<std::array<bool, 4>, 16> patterns = {{
+        {0, 0, 0, 0},
+        {0, 0, 0, 1},
+        {0, 0, 1, 0},
+        {0, 0, 1, 1},
+        {0, 1, 0, 0},
+        {0, 1, 0, 1},
+        {0, 1, 1, 0},
+        {0, 1, 1, 1},
+        {1, 0, 0, 0},
+        {1, 0, 0, 1},
+        {1, 0, 1, 0},
+        {1, 0, 1, 1},
+        {1, 1, 0, 0},
+        {1, 1, 0, 1},
+        {1, 1, 1, 0},
+        {1, 1, 1, 1}
+    }};
+
+    const std::array<std::array<bool, 4>, 16>& from = (invert ? transforms_ : patterns);
+    const std::array<std::array<bool, 4>, 16>& to = (invert ? patterns : transforms_);
+
+    for (size_t i = 0; i < 16; i++)
+        if (blockCompare(from[i], block)) {
+            //for (size_t j = 0; j < 4; j++)
+                //block[j] = to[i][j];
+            std::copy(to[i].begin(), to[i].end(), block.begin());
+            return;
         }
-    }
+}
+
+bool Margolus::blockCompare(const std::array<bool, 4>& a, const std::array<bool, 4>& b) {
+    for (size_t i = 0; i < 4; i++)
+        if (a[i] != b[i])
+            return false;
+    return true;
 }
 
 void Margolus::step(stepDirection move) {
-    bool active[4];
-    size_t activeSum;
-
     if (move == BACKWARD)
-        offset = 1 - offset;
+        offset_ = 1 - offset_;
 
     for (size_t i = 0; i < height_; i += 2) {
         for (size_t j = 0; j < width_; j += 2) {
-            active[0] = (size_t) grid[(offset + i) % height_][(offset + j) % width_];
-            active[1] = (size_t) grid[(offset + i) % height_][(offset + j + 1) % width_];
-            active[2] = (size_t) grid[(offset + i + 1) % height_][(offset + j) % width_];
-            active[3] = (size_t) grid[(offset + i + 1) % height_][(offset + j + 1) % width_];
+            std::array<bool, 4> active = {{
+                grid[(offset_ + i) % height_][(offset_ + j) % width_],
+                grid[(offset_ + i) % height_][(offset_ + j + 1) % width_],
+                grid[(offset_ + i + 1) % height_][(offset_ + j) % width_],
+                grid[(offset_ + i + 1) % height_][(offset_ + j + 1) % width_]
+            }};
 
-            activeSum = (size_t) active[0] + active[1] + active[2] + active[3];
-            bool changed = false;
+            //MargolusRender::basicANSI(grid);
+            //std::cout << "before: " << active[0] << ", " << active[1] << ", " << active[2] << ", " << active[3] << std::endl;
 
-            if (activeSum == 3 and move == FORWARD) {
-                //rotate180Block(active);
-                //invertBlock(active);
+            if (move == FORWARD)
                 applyTransforms(active);
-                changed = true;
-
-            } else if (activeSum == 1 and move == BACKWARD) {
-                //rotate180Block(active);
-                //invertBlock(active);
+            else
                 applyTransforms(active, true);
-                changed = true;
 
-            } else if (activeSum != 2) {
-                invertBlock(active);
-                changed = true;
-            }
+            //std::cout << "after: " << active[0] << ", " << active[1] << ", " << active[2] << ", " << active[3] << std::endl;
+            //usleep(1000*500);
 
-            if (changed) {
-                grid[(offset + i) % height_][(offset + j) % width_] = active[0];
-                grid[(offset + i) % height_][(offset + j + 1) % width_] = active[1];
-                grid[(offset + i + 1) % height_][(offset + j) % width_] = active[2];
-                grid[(offset + i + 1) % height_][(offset + j + 1) % width_] = active[3];
-            }
+            grid[(offset_ + i) % height_][(offset_ + j) % width_] = active[0];
+            grid[(offset_ + i) % height_][(offset_ + j + 1) % width_] = active[1];
+            grid[(offset_ + i + 1) % height_][(offset_ + j) % width_] = active[2];
+            grid[(offset_ + i + 1) % height_][(offset_ + j + 1) % width_] = active[3];
+
         }
     }
 
     if (move == FORWARD)
-        offset = 1 - offset;
-}
-
-void Margolus::invertBlock(bool block[4]) {
-    for (size_t i = 0; i < 4; i++)
-        block[i] = !block[i];
-}
-
-void Margolus::rotate90LeftBlock(bool block[4]) {
-    std::swap(block[2], block[0]);
-    std::swap(block[0], block[1]);
-    std::swap(block[1], block[3]);
-}
-
-void Margolus::rotate90RightBlock(bool block[4]) {
-    std::swap(block[1], block[3]);
-    std::swap(block[0], block[1]);
-    std::swap(block[2], block[0]);
-}
-
-void Margolus::rotate180Block(bool block[4]) {
-    std::swap(block[0], block[3]);
-    std::swap(block[1], block[2]);
+        offset_ = 1 - offset_;
 }

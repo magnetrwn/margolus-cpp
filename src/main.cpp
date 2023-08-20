@@ -1,4 +1,5 @@
 #include <iostream>
+#include <array>
 #include <vector>
 #include <string>
 #include <unistd.h>
@@ -42,7 +43,6 @@ void demo1(Margolus crt) {
     crt.fillPoint(30, 14, Margolus::UP);
 
     for (size_t q = 0; q < 150; q++) {
-        std::cout << "\033[2J\033[H";
         crt.step(Margolus::FORWARD);
         MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
         usleep(1000 * 75);
@@ -58,11 +58,9 @@ void demo2(Margolus crt) {
     crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE, 0.5);
 
     for (size_t p = 0; p < 4; p++) {
-        std::cout << "\033[2J\033[H";
         MargolusRender::basicANSI(crt.getGrid());
         usleep(1000 * 650);
         for (size_t q = 0; q < 50; q++) {
-            std::cout << "\033[2J\033[H";
             crt.step(Margolus::FORWARD);
             MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
             usleep(1000 * 75);
@@ -75,17 +73,15 @@ void demo2(Margolus crt) {
 
 int main(int argc, char **argv) {
     bool show_help = false, run_demo = false, run_animated = false;
-    size_t width, height;
-    long iter;
-    std::string config_file;
+    size_t width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT;
+    long iter = 0;
 
     popl::OptionParser options("Available command line options");
     options.add<popl::Switch>("h", "help", "display help message", &show_help);
-    options.add<popl::Value<size_t>>("W", "width", "horizontal size of the grid", DEFAULT_WIDTH, &width);
-    options.add<popl::Value<size_t>>("H", "height", "vertical size of the grid", DEFAULT_HEIGHT, &height);
-    options.add<popl::Value<long>>("i", "iters", "iterations to run, positive forwards, negative backwards", 0, &iter);
+    options.add<popl::Value<size_t>>("W", "width", "horizontal size of the grid", width, &width);
+    options.add<popl::Value<size_t>>("H", "height", "vertical size of the grid", height, &height);
+    options.add<popl::Value<long>>("i", "iters", "iterations to run, positive forwards, negative backwards", iter, &iter);
     options.add<popl::Switch>("a", "animated", "run with a 75ms step animation", &run_animated);
-    options.add<popl::Value<std::string>>("", "config", "location of the config INI file", DEFAULT_CONFIG_FILE, &config_file);
     options.add<popl::Switch>("", "demo", "run the demo loop", &run_demo);
 
     options.parse(argc, argv);
@@ -95,8 +91,60 @@ int main(int argc, char **argv) {
         return 0;
     }
 
+    // Here are the conversions for Critters,
+    // 1 2   Each block is separated in the following
+    // 3 4   four bools, in this order.
+    // Then the ruleset determines, in rising binary
+    // order, how to convert from one state to the
+    // next.
+    // E.g.: {0, 0, 0, 0} -> ruleset[0]
+    //       {0, 0, 0, 1} -> ruleset[1]
+    //       {0, 0, 1, 0} -> ruleset[2]
+    //       ...
+    const std::array<std::array<bool, 4>, 16> critters_ruleset = {{
+        {1, 1, 1, 1},
+        {1, 1, 1, 0},
+        {1, 1, 0, 1},
+        {0, 0, 1, 1},
+
+        {1, 0, 1, 1},
+        {0, 1, 0, 1},
+        {0, 1, 1, 0},
+        {0, 0, 0, 1},
+
+        {0, 1, 1, 1},
+        {1, 0, 0, 1},
+        {1, 0, 1, 0},
+        {0, 0, 1, 0},
+
+        {1, 1, 0, 0},
+        {0, 1, 0, 0},
+        {1, 0, 0, 0},
+        {0, 0, 0, 0}
+    }};
+
+    const std::array<std::array<bool, 4>, 16> billiard_ball_ruleset = {{
+        {0, 0, 0, 0},
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, 1},
+        {0, 0, 1, 0},
+        {0, 1, 0, 1},
+        {1, 0, 0, 1},
+        {0, 1, 1, 1},
+        {0, 0, 0, 1},
+        {0, 1, 1, 0},
+        {1, 0, 1, 0},
+        {1, 0, 1, 1},
+        {1, 1, 0, 0},
+        {1, 1, 0, 1},
+        {1, 1, 1, 0},
+        {1, 1, 1, 1}
+    }};
+
+
     if (run_demo) {
-        Margolus crt(DEFAULT_WIDTH, DEFAULT_HEIGHT, TXTUtil::readTXT(DEFAULT_CONFIG_FILE));
+        Margolus crt(DEFAULT_WIDTH, DEFAULT_HEIGHT, billiard_ball_ruleset);
 
         while (true) {
             demo1(crt);
@@ -104,29 +152,27 @@ int main(int argc, char **argv) {
         }
 
     } else {
-        Margolus crt(width, height, TXTUtil::readTXT(config_file));
-        crt.fillRect(2, 2, width - 3, height - 3, Margolus::UP, 0.16667);
+        Margolus crt(width, height, billiard_ball_ruleset);
+        crt.fillPoint(6, 1, Margolus::UP);
+        crt.fillPoint(5, 2, Margolus::UP);
+        crt.fillPoint(5, 3, Margolus::UP);
+        crt.fillPoint(6, 4, Margolus::UP);
+
+        Margolus::stepDirection direction = Margolus::FORWARD;
+
         if (iter < 0) {
-            for (long i = 0; i < -iter; i++) {
-                if (run_animated) {
-                    std::cout << "\033[2J\033[H";
-                    MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
-                    usleep(1000 * 75);
-                }
-                crt.step(Margolus::BACKWARD);
-            }
-        } else {
-            for (long i = 0; i < iter; i++) {
-                if (run_animated) {
-                    std::cout << "\033[2J\033[H";
-                    MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
-                    usleep(1000 * 75);
-                }
-                crt.step(Margolus::FORWARD);
-            }
+            iter = -iter;
+            direction = Margolus::BACKWARD;
         }
-        std::cout << "\033[2J\033[H";
-        MargolusRender::basicANSI(crt.getGrid(), crt.getOffset());
+
+        for (long i = 0; i < iter; i++) {
+            if (run_animated) {
+                MargolusRender::basicANSI(crt.getGrid());
+                usleep(1000 * 75);
+            }
+            crt.step(direction);
+        }
+        MargolusRender::basicANSI(crt.getGrid());
     }
 
     return 0;
