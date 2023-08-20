@@ -1,4 +1,5 @@
 #include "margolus.hpp"
+#include "marg_ruletool.hpp"
 
 
 Margolus::Margolus(const size_t width, const size_t height, const std::array<std::array<bool, 4>, 16>& transforms, const size_t offset)
@@ -83,32 +84,13 @@ void Margolus::fillPoint(size_t x1, size_t y1, const fillState state, const doub
 }
 
 void Margolus::applyTransforms(std::array<bool, 4>& block, const bool invert) {
-    static const std::array<std::array<bool, 4>, 16> patterns = {{
-        {0, 0, 0, 0},
-        {0, 0, 0, 1},
-        {0, 0, 1, 0},
-        {0, 0, 1, 1},
-        {0, 1, 0, 0},
-        {0, 1, 0, 1},
-        {0, 1, 1, 0},
-        {0, 1, 1, 1},
-        {1, 0, 0, 0},
-        {1, 0, 0, 1},
-        {1, 0, 1, 0},
-        {1, 0, 1, 1},
-        {1, 1, 0, 0},
-        {1, 1, 0, 1},
-        {1, 1, 1, 0},
-        {1, 1, 1, 1}
-    }};
+    static const std::array<std::array<bool, 4>, 16> binary_up = MargolusRuletool::generateTransforms(MargolusRuletool::_BINARY);
 
-    const std::array<std::array<bool, 4>, 16>& from = (invert ? transforms_ : patterns);
-    const std::array<std::array<bool, 4>, 16>& to = (invert ? patterns : transforms_);
+    const std::array<std::array<bool, 4>, 16>& from = (invert ? transforms_ : binary_up);
+    const std::array<std::array<bool, 4>, 16>& to = (invert ? binary_up : transforms_);
 
     for (size_t i = 0; i < 16; i++)
         if (blockCompare(from[i], block)) {
-            //for (size_t j = 0; j < 4; j++)
-                //block[j] = to[i][j];
             std::copy(to[i].begin(), to[i].end(), block.begin());
             return;
         }

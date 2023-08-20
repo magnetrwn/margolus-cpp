@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "marg_ruletool.hpp"
 #include "util.hpp"
 
 

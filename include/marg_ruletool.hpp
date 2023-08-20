@@ -18,22 +18,39 @@ private:
     //       {0, 0, 1, 0} -> ruleset[2]
     //       ...
 
+    static constexpr std::array<std::array<bool, 4>, 16> sequential_binary = {{
+        // Avoid using as ruleset (this is used to represent the rising binary sequence)
+        {0, 0, 0, 0},
+        {0, 0, 0, 1},
+        {0, 0, 1, 0},
+        {0, 0, 1, 1},
+        {0, 1, 0, 0},
+        {0, 1, 0, 1},
+        {0, 1, 1, 0},
+        {0, 1, 1, 1},
+        {1, 0, 0, 0},
+        {1, 0, 0, 1},
+        {1, 0, 1, 0},
+        {1, 0, 1, 1},
+        {1, 1, 0, 0},
+        {1, 1, 0, 1},
+        {1, 1, 1, 0},
+        {1, 1, 1, 1}
+    }};
+
     static constexpr std::array<std::array<bool, 4>, 16> critters_ruleset = {{
         {1, 1, 1, 1},
         {1, 1, 1, 0},
         {1, 1, 0, 1},
         {0, 0, 1, 1},
-
         {1, 0, 1, 1},
         {0, 1, 0, 1},
         {0, 1, 1, 0},
         {0, 0, 0, 1},
-
         {0, 1, 1, 1},
         {1, 0, 0, 1},
         {1, 0, 1, 0},
         {0, 0, 1, 0},
-
         {1, 1, 0, 0},
         {0, 1, 0, 0},
         {1, 0, 0, 0},
@@ -60,7 +77,7 @@ private:
     }};
 
 public:
-    enum knownRuleset { BILLIARD_BALL, CRITTERS };
+    enum knownRuleset { _BINARY, BILLIARD_BALL, CRITTERS };
     static const std::array<std::array<bool, 4>, 16> generateTransforms(knownRuleset name);
 };
 

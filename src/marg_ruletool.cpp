@@ -3,6 +3,8 @@
 
 const std::array<std::array<bool, 4>, 16> MargolusRuletool::generateTransforms(knownRuleset name) {
     switch (name) {
+        case _BINARY:
+            return MargolusRuletool::sequential_binary;
         case BILLIARD_BALL:
             return MargolusRuletool::billiard_ball_ruleset;
         case CRITTERS:
