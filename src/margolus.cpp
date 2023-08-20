@@ -32,6 +32,10 @@ const std::pair<size_t, size_t> Margolus::getSize() const {
     return std::pair<size_t, size_t>(width_, height_);
 }
 
+const std::array<std::array<bool, 4>, 16>& Margolus::getTransforms() const {
+    return transforms_;
+}
+
 bool Margolus::getOffset() const {
     return (bool) offset_ % 2;
 }

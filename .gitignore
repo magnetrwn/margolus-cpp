@@ -1,4 +1,3 @@
-build/margolus
 margolus.zip*
 .cache/**
 **/compile_commands.json

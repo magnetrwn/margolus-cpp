@@ -6,12 +6,15 @@
 
 #include "margolus.hpp"
 #include "marg_render.hpp"
+#include "marg_ruletool.hpp"
 #include "util.hpp"
 
 #include "popl.hpp"
 
 
-void demo1(Margolus crt) {
+void demo_critters_periodic() {
+    Margolus crt(DEFAULT_WIDTH, DEFAULT_HEIGHT, MargolusRuletool::generateTransforms(MargolusRuletool::CRITTERS));
+
     size_t width = crt.getSize().first;
     size_t height = crt.getSize().second;
 
@@ -51,7 +54,9 @@ void demo1(Margolus crt) {
     crt.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
 }
 
-void demo2(Margolus crt) {
+void demo_critters_spawns() {
+    Margolus crt(DEFAULT_WIDTH, DEFAULT_HEIGHT, MargolusRuletool::generateTransforms(MargolusRuletool::CRITTERS));
+
     size_t width = crt.getSize().first;
     size_t height = crt.getSize().second;
 
@@ -71,8 +76,30 @@ void demo2(Margolus crt) {
     crt.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
 }
 
+void demo_billiards_concave() {
+    Margolus bb(DEFAULT_WIDTH, DEFAULT_HEIGHT, MargolusRuletool::generateTransforms(MargolusRuletool::BILLIARD_BALL));
+
+    size_t width = bb.getSize().first;
+    size_t height = bb.getSize().second;
+
+    bb.fillRect(6, 4, 16, 5, Margolus::UP);
+    bb.fillRect(6, 10, 16, 11, Margolus::UP);
+    bb.fillRect(5, 4, 6, 11, Margolus::UP);
+
+    bb.fillRect(8, 7, 16, 8, Margolus::NOISE, 0.3333);
+
+    for (size_t q = 0; q < 220; q++) {
+        bb.step(Margolus::FORWARD);
+        MargolusRender::basicANSI(bb.getGrid());
+        usleep(1000 * 75);
+    }
+
+    bb.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
+}
+
 int main(int argc, char **argv) {
     bool show_help = false, run_demo = false, run_animated = false;
+    bool odd_flips_color = false;
     size_t width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT;
     long iter = 0;
 
@@ -81,6 +108,7 @@ int main(int argc, char **argv) {
     options.add<popl::Value<size_t>>("W", "width", "horizontal size of the grid", width, &width);
     options.add<popl::Value<size_t>>("H", "height", "vertical size of the grid", height, &height);
     options.add<popl::Value<long>>("i", "iters", "iterations to run, positive forwards, negative backwards", iter, &iter);
+    options.add<popl::Switch>("o", "odd-flip", "flip render colors on odd iterations", &odd_flips_color);
     options.add<popl::Switch>("a", "animated", "run with a 75ms step animation", &run_animated);
     options.add<popl::Switch>("", "demo", "run the demo loop", &run_demo);
 
@@ -91,68 +119,15 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    // Here are the conversions for Critters,
-    // 1 2   Each block is separated in the following
-    // 3 4   four bools, in this order.
-    // Then the ruleset determines, in rising binary
-    // order, how to convert from one state to the
-    // next.
-    // E.g.: {0, 0, 0, 0} -> ruleset[0]
-    //       {0, 0, 0, 1} -> ruleset[1]
-    //       {0, 0, 1, 0} -> ruleset[2]
-    //       ...
-    const std::array<std::array<bool, 4>, 16> critters_ruleset = {{
-        {1, 1, 1, 1},
-        {1, 1, 1, 0},
-        {1, 1, 0, 1},
-        {0, 0, 1, 1},
-
-        {1, 0, 1, 1},
-        {0, 1, 0, 1},
-        {0, 1, 1, 0},
-        {0, 0, 0, 1},
-
-        {0, 1, 1, 1},
-        {1, 0, 0, 1},
-        {1, 0, 1, 0},
-        {0, 0, 1, 0},
-
-        {1, 1, 0, 0},
-        {0, 1, 0, 0},
-        {1, 0, 0, 0},
-        {0, 0, 0, 0}
-    }};
-
-    const std::array<std::array<bool, 4>, 16> billiard_ball_ruleset = {{
-        {0, 0, 0, 0},
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {0, 0, 1, 1},
-        {0, 0, 1, 0},
-        {0, 1, 0, 1},
-        {1, 0, 0, 1},
-        {0, 1, 1, 1},
-        {0, 0, 0, 1},
-        {0, 1, 1, 0},
-        {1, 0, 1, 0},
-        {1, 0, 1, 1},
-        {1, 1, 0, 0},
-        {1, 1, 0, 1},
-        {1, 1, 1, 0},
-        {1, 1, 1, 1}
-    }};
-
-
     if (run_demo) {
-        Margolus crt(DEFAULT_WIDTH, DEFAULT_HEIGHT, billiard_ball_ruleset);
-
         while (true) {
-            demo1(crt);
-            demo2(crt);
+            demo_billiards_concave();
+            demo_critters_periodic();
+            demo_critters_spawns();
         }
 
-    } else {
-        Margolus crt(width, height, billiard_ball_ruleset);
+    } /*else {
+        Margolus marg(width, height, billiard_ball_ruleset);
         crt.fillPoint(6, 1, Margolus::UP);
         crt.fillPoint(5, 2, Margolus::UP);
         crt.fillPoint(5, 3, Margolus::UP);
@@ -167,13 +142,13 @@ int main(int argc, char **argv) {
 
         for (long i = 0; i < iter; i++) {
             if (run_animated) {
-                MargolusRender::basicANSI(crt.getGrid());
+                MargolusRender::basicANSI(crt.getGrid(), odd_flips_color and crt.getOffset());
                 usleep(1000 * 75);
             }
             crt.step(direction);
         }
-        MargolusRender::basicANSI(crt.getGrid());
-    }
+        MargolusRender::basicANSI(crt.getGrid(), odd_flips_color and crt.getOffset());
+    }*/
 
     return 0;
 }

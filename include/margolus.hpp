@@ -32,6 +32,7 @@ public:
 
     const std::deque<std::deque<bool>>& getGrid() const;
     const std::pair<size_t, size_t> getSize() const;
+    const std::array<std::array<bool, 4>, 16>& getTransforms() const;
     bool getOffset() const;
 
     enum stepDirection { FORWARD, BACKWARD };
