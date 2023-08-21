@@ -4,6 +4,8 @@
 
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
 
+**Note:** the following README.md file needs to be updated, please disregard some of the information here!
+
 ## Asciinema Demo
 The following demo shows Margolus CPP running with a Critters ruleset (you can see `demo1()` and `demo2()` in `src/main.cpp`, alternating every few seconds).
 

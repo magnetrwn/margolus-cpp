@@ -1,5 +1,4 @@
 #include "margolus.hpp"
-#include "marg_ruletool.hpp"
 
 
 Margolus::Margolus(const size_t width, const size_t height, const std::array<std::array<bool, 4>, 16>& transforms, const size_t offset)

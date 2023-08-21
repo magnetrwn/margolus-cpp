@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "margolus.hpp"
+#include "marg_file.hpp"
 #include "marg_render.hpp"
 #include "marg_ruletool.hpp"
 #include "util.hpp"
@@ -51,6 +52,7 @@ void demo_critters_periodic() {
         usleep(1000 * 75);
     }
 
+    MargolusFile::writeMargolus("demo_critters_periodic.txt", crt);
     crt.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
 }
 
@@ -73,6 +75,7 @@ void demo_critters_spawns() {
         crt.fillRect(width/2 - 3, height/2 - 2, width/2 + 3, height/2 + 2, Margolus::NOISE_TOGGLE, 0.875);
     }
 
+    MargolusFile::writeMargolus("demo_critters_spawns.txt", crt);
     crt.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
 }
 
@@ -94,6 +97,33 @@ void demo_billiards_concave() {
         usleep(1000 * 75);
     }
 
+    MargolusFile::writeMargolus("demo_billiards_concave.txt", bb);
+    bb.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
+}
+
+void demo_billiards_squiggle() {
+    Margolus bb(DEFAULT_WIDTH, DEFAULT_HEIGHT, MargolusRuletool::generateTransforms(MargolusRuletool::BILLIARD_BALL));
+
+    size_t width = bb.getSize().first;
+    size_t height = bb.getSize().second;
+
+    bb.fillRect(1, 0, 34, 1, Margolus::UP);
+    bb.fillRect(1, 12, 34, 13, Margolus::UP);
+    bb.fillRect(0, 1, 1, 12, Margolus::UP);
+    bb.fillRect(34, 1, 35, 12, Margolus::UP);
+    bb.fillRect(8, 2, 9, 6, Margolus::UP);
+    bb.fillRect(26, 2, 27, 6, Margolus::UP);
+    bb.fillRect(17, 6, 18, 11, Margolus::UP);
+
+    bb.fillRect(3, 3, 6, 10, Margolus::NOISE);
+
+    for (size_t q = 0; q < 150; q++) {
+        bb.step(Margolus::FORWARD);
+        MargolusRender::basicANSI(bb.getGrid());
+        usleep(1000 * 75);
+    }
+
+    MargolusFile::writeMargolus("demo_billiards_squiggle.txt", bb);
     bb.fillRect(0, 0, width - 1, height - 1, Margolus::DOWN);
 }
 
@@ -121,11 +151,11 @@ int main(int argc, char **argv) {
 
     if (run_demo) {
         while (true) {
-            demo_billiards_concave();
+            demo_billiards_squiggle();
             demo_critters_periodic();
+            demo_billiards_concave();
             demo_critters_spawns();
         }
-
     } /*else {
         Margolus marg(width, height, billiard_ball_ruleset);
         crt.fillPoint(6, 1, Margolus::UP);
@@ -149,6 +179,18 @@ int main(int argc, char **argv) {
         }
         MargolusRender::basicANSI(crt.getGrid(), odd_flips_color and crt.getOffset());
     }*/
+
+    /*Margolus bb(width, height, MargolusRuletool::generateTransforms(MargolusRuletool::BILLIARD_BALL));
+
+    bb.fillRect(1, 0, 34, 1, Margolus::UP);
+    bb.fillRect(1, 12, 34, 13, Margolus::UP);
+    bb.fillRect(0, 1, 1, 12, Margolus::UP);
+    bb.fillRect(34, 1, 35, 12, Margolus::UP);
+    bb.fillRect(8, 2, 9, 6, Margolus::UP);
+    bb.fillRect(26, 2, 27, 6, Margolus::UP);
+    bb.fillRect(17, 6, 18, 11, Margolus::UP);
+
+    bb.fillRect(3, 3, 6, 10, Margolus::NOISE);*/
 
     return 0;
 }
