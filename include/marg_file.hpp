@@ -24,6 +24,7 @@ public:
     // .....$$$............$
     //
     static Margolus readMargolus(const std::string& filename);
+    static std::vector<std::string> fileStringsGenerator(const Margolus& marg);
     static void writeMargolus(const std::string& filename, const Margolus& marg);
 };
 

@@ -27,7 +27,7 @@ Margolus MargolusFile::readMargolus(const std::string &filename) {
     return marg;
 }
 
-void MargolusFile::writeMargolus(const std::string& filename, const Margolus& marg) {
+std::vector<std::string> MargolusFile::fileStringsGenerator(const Margolus& marg) {
     std::vector<std::string> output;
 
     std::string firstRow;
@@ -52,5 +52,9 @@ void MargolusFile::writeMargolus(const std::string& filename, const Margolus& ma
         output.push_back(outputRow);
     }
 
-    TXTUtil::writeTXT(filename, output);
+    return output;
+}
+
+void MargolusFile::writeMargolus(const std::string& filename, const Margolus& marg) {
+    TXTUtil::writeTXT(filename, fileStringsGenerator(marg));
 }
