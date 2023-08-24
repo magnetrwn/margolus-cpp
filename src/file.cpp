@@ -1,4 +1,4 @@
-#include "marg_file.hpp"
+#include "file.hpp"
 
 
 Margolus MargolusFile::readMargolus(const std::string &filename) {
@@ -10,7 +10,6 @@ Margolus MargolusFile::readMargolus(const std::string &filename) {
         input = TXTUtil::readTXT(filename);
     else {
         std::string line;
-        // Read input from STDIN until an empty line is encountered
         while (std::getline(std::cin, line) && !line.empty()) {
             input.push_back(line);
         }
@@ -69,7 +68,6 @@ void MargolusFile::writeMargolus(const Margolus& marg, const std::string& filena
     if (!filename.empty())
         TXTUtil::writeTXT(filename, fileStringsGenerator(marg));
     else
-        // Write to STDOUT
         for (std::string& line : MargolusFile::fileStringsGenerator(marg))
             std::cout << line << std::endl;
 }

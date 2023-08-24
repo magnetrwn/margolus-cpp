@@ -1,4 +1,4 @@
-#include "marg_ruletool.hpp"
+#include "ruletool.hpp"
 
 
 const std::array<std::array<bool, 4>, 16> MargolusRuletool::generateTransforms(knownRuleset name) {

@@ -6,9 +6,9 @@
 #include <unistd.h>
 
 #include "margolus.hpp"
-#include "marg_file.hpp"
-#include "marg_render.hpp"
-#include "marg_ruletool.hpp"
+#include "file.hpp"
+#include "render.hpp"
+#include "ruletool.hpp"
 #include "util.hpp"
 
 #include "popl.hpp"
