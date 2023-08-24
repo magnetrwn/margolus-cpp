@@ -2,9 +2,19 @@
 
 
 Margolus MargolusFile::readMargolus(const std::string &filename) {
-    std::vector<std::string> input = TXTUtil::readTXT(filename);
+    std::vector<std::string> input;
     std::array<std::array<bool, 4>, 16> transforms;
     size_t width, height, offset;
+
+    if (!filename.empty())
+        input = TXTUtil::readTXT(filename);
+    else {
+        std::string line;
+        // Read input from STDIN until an empty line is encountered
+        while (std::getline(std::cin, line) && !line.empty()) {
+            input.push_back(line);
+        }
+    }
 
     std::vector<std::string> firstRow = TXTUtil::splitLineTXT(input[0], ":");
     width = std::stoul(firstRow[0]);
@@ -55,6 +65,11 @@ std::vector<std::string> MargolusFile::fileStringsGenerator(const Margolus& marg
     return output;
 }
 
-void MargolusFile::writeMargolus(const std::string& filename, const Margolus& marg) {
-    TXTUtil::writeTXT(filename, fileStringsGenerator(marg));
+void MargolusFile::writeMargolus(const Margolus& marg, const std::string& filename) {
+    if (!filename.empty())
+        TXTUtil::writeTXT(filename, fileStringsGenerator(marg));
+    else
+        // Write to STDOUT
+        for (std::string& line : MargolusFile::fileStringsGenerator(marg))
+            std::cout << line << std::endl;
 }

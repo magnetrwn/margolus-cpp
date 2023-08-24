@@ -15,9 +15,9 @@ endif()
 
 add_executable(${PROJECT_NAME} ${PROJECT_FILES})
 
-add_compile_definitions(-DMAX_SCREEN_ANY=512)
-add_compile_definitions(-DDEFAULT_WIDTH=48)
-add_compile_definitions(-DDEFAULT_HEIGHT=20)
+add_compile_definitions(-DMAX_SCREEN_ANY=16384)
+add_compile_definitions(-DDEFAULT_NEW_WIDTH=80)
+add_compile_definitions(-DDEFAULT_NEW_HEIGHT=48)
 
 target_include_directories(
     ${PROJECT_NAME}

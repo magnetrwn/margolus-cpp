@@ -7,7 +7,7 @@
 
 class MargolusRender {
 public:
-    static void basicANSI(const std::deque<std::deque<bool>>& grid, bool invert = false);
+    static void basicANSI(const std::deque<std::deque<bool>>& grid, const bool invert = false);
 };
 
 #endif

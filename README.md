@@ -4,7 +4,7 @@
 
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
 
-**Note:** the following README.md file needs to be updated, please disregard some of the information here!
+The behaviour of the simulator can be controlled by setting the ruleset used to control how each 2x2 block is changed for each iteration.
 
 ## Asciinema Demo
 The following demo shows Margolus CPP running with a Critters ruleset (you can see `demo1()` and `demo2()` in `src/main.cpp`, alternating every few seconds).
@@ -26,14 +26,14 @@ Output of `./margolus -h`:
 
 ```
 Available command line options:
-  -h, --help                    display help message
-  -W, --width arg (=36)         horizontal size of the grid
-  -H, --height arg (=14)        vertical size of the grid
-  -i, --iters arg (=0)          iterations to run, positive forwards, negative backwards
-  -a, --animated                run with a 75ms step animation
-  --config arg (=margolus.ini)  location of the config INI file
-  --demo                        run the demo loop
-
+  -h, --help                Display help message.
+  -l, --load arg            Path to the file to load.
+  -s, --save arg            Path to the file to save, once finished.
+  -S, --save-stdout         Show output file on stdout instead of an actual file.
+  -i, --iters arg (=0)      Iterations to run, positive forwards, negative backwards.
+  -r, --render arg (=ANSI)  Engine to use to render grid, options: q, ANSI, SDL2.
+  -o, --odd-flip            Flip render colors on odd iterations.
+  -a, --animated            Run with a 75ms step animation.
 ```
 Running `./margolus` with no arguments will just display the state of the grid, with default width and height, without stepping the simulation, but additional parameters can change the behaviour of the program.
 
