@@ -1,7 +1,7 @@
 #include "file.hpp"
 
 
-Margolus MargolusFile::readMargolus(const std::string &filename) {
+std::unique_ptr<Margolus> MargolusFile::readMargolus(const std::string &filename) {
     std::vector<std::string> input;
     std::array<std::array<bool, 4>, 16> transforms;
     size_t width, height, offset;
@@ -33,7 +33,7 @@ Margolus MargolusFile::readMargolus(const std::string &filename) {
             marg.fillPoint(j, i - 2, (input[i][j] == '$') ? Margolus::UP : Margolus::DOWN);
         }
 
-    return marg;
+    return std::make_unique<Margolus>(marg);
 }
 
 std::vector<std::string> MargolusFile::fileStringsGenerator(const Margolus& marg) {

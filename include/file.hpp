@@ -6,6 +6,7 @@
 #include <vector>
 #include <deque>
 #include <array>
+#include <memory>
 #include <stdexcept>
 
 #include "margolus.hpp"
@@ -33,7 +34,7 @@ public:
     // for readMargolus() and writeMargolus(), skipping the filename means STDIN/STDOUT.
     // Warning: readMargolus will read until an empty line is encountered!
 
-    static Margolus readMargolus(const std::string& filename = "");
+    static std::unique_ptr<Margolus> readMargolus(const std::string& filename = "");
     static std::vector<std::string> fileStringsGenerator(const Margolus& marg);
     static void writeMargolus(const Margolus& marg, const std::string& filename = "");
 };

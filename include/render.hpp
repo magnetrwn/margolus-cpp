@@ -3,11 +3,12 @@
 
 #include <iostream>
 #include <deque>
+#include <algorithm>
 
 
 class MargolusRender {
 public:
-    static void basicANSI(const std::deque<std::deque<bool>>& grid, const bool invert = false);
+    static void basicANSI(const std::deque<std::deque<bool>>& grid, const bool invert = false, const std::string& comment = "ANSI render");
 };
 
 #endif

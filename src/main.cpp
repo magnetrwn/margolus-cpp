@@ -16,58 +16,58 @@
 
 int main(int argc, char **argv) {
 
+    std::string loadFile, saveFile, renderer = "ANSI";
+    bool showHelp = false,
+            runAnimated = false,
+            createNew = false,
+            inputToStdin = false,
+            outputToStdout = false,
+            oddFlipsColor = false;
+    size_t newWidth = DEFAULT_NEW_WIDTH, newHeight = DEFAULT_NEW_HEIGHT;
+    long iter = 0;
+
+    popl::OptionParser options("Available command line options");
+
+    options.add<popl::Switch>("h", "help", "Display help message.", &showHelp);
+
+    options.add<popl::Switch>("n", "new", "Create an empty grid.", &createNew);
+    options.add<popl::Value<size_t>>("W", "width", "horizontal size of the new grid", newWidth, &newWidth);
+    options.add<popl::Value<size_t>>("H", "height", "vertical size of the new grid", newHeight, &newHeight);
+
+    options.add<popl::Value<std::string>>("l", "load", "Path to the file to load.", loadFile, &loadFile);
+    options.add<popl::Switch>("L", "load-stdin", "Load input file from STDIN.", &inputToStdin);
+    options.add<popl::Value<std::string>>("s", "save", "Path to the file to save, once finished.", saveFile, &saveFile);
+    options.add<popl::Switch>("S", "save-stdout", "Show output file on STDOUT.", &outputToStdout);
+
+    options.add<popl::Value<long>>("i", "iters", "Iterations to run, positive forwards, negative backwards.", iter, &iter);
+    options.add<popl::Value<std::string>>("r", "render", "Engine to use to render grid, options: q, ANSI, GIF, SDL2.", renderer, &renderer);
+    options.add<popl::Switch>("o", "odd-flip", "Flip render colors on odd iterations.", &oddFlipsColor);
+    options.add<popl::Switch>("a", "animated", "Run with a 75ms step animation.", &runAnimated);
+
+    // Arguments: new grid creation
+
+    // Arguments: new ruleset creation
+
     try {
-
-        std::string load_file, save_file, renderer = "ANSI";
-        bool show_help = false,
-             run_animated = false,
-             create_new = false,
-             input_to_stdin = false,
-             output_to_stdout = false,
-             odd_flips_color = false;
-        size_t new_width = DEFAULT_NEW_WIDTH, new_height = DEFAULT_NEW_HEIGHT;
-        long iter = 0;
-
-        popl::OptionParser options("Available command line options");
-
-        options.add<popl::Switch>("h", "help", "Display help message.", &show_help);
-
-        options.add<popl::Switch>("n", "new", "Create an empty grid.", &create_new);
-        options.add<popl::Value<size_t>>("W", "width", "horizontal size of the new grid", DEFAULT_NEW_WIDTH, &new_width);
-        options.add<popl::Value<size_t>>("H", "height", "vertical size of the new grid", DEFAULT_NEW_HEIGHT, &new_height);
-
-        options.add<popl::Value<std::string>>("l", "load", "Path to the file to load.", load_file, &load_file);
-        options.add<popl::Switch>("L", "load-stdin", "Load input file from STDIN.", &input_to_stdin);
-        options.add<popl::Value<std::string>>("s", "save", "Path to the file to save, once finished.", save_file, &save_file);
-        options.add<popl::Switch>("S", "save-stdout", "Show output file on STDOUT.", &output_to_stdout);
-
-        options.add<popl::Value<long>>("i", "iters", "Iterations to run, positive forwards, negative backwards.", iter, &iter);
-        options.add<popl::Value<std::string>>("r", "render", "Engine to use to render grid, options: q, ANSI, GIF, SDL2.", renderer, &renderer);
-        options.add<popl::Switch>("o", "odd-flip", "Flip render colors on odd iterations.", &odd_flips_color);
-        options.add<popl::Switch>("a", "animated", "Run with a 75ms step animation.", &run_animated);
-
-        // Arguments: new grid creation
-
-        // Arguments: new ruleset creation
-
         options.parse(argc, argv);
 
-        if (show_help) {
+        if (showHelp) {
             std::cout << options << std::endl;
             return 0;
         }
 
-        if (load_file.empty() and !input_to_stdin)
-            throw std::runtime_error("No input filename provided, use -L for STDIN.");
+        if (loadFile.empty() and !inputToStdin)
+            throw std::invalid_argument("No input filename provided, use -L for STDIN.");
 
-        if (output_to_stdout and run_animated)
-            throw std::runtime_error("Not running animated with output to STDOUT.");
+        if (outputToStdout and runAnimated)
+            throw std::invalid_argument("Not running animated with output to STDOUT.");
 
         if (renderer != "q" and renderer != "ANSI" and renderer != "GIF" and renderer != "SDL2")
-            throw std::runtime_error("No such known renderer, options: q, ANSI, GIF, SDL2.");
+            throw std::invalid_argument("No such known renderer, options: q, ANSI, GIF, SDL2.");
 
 
-        Margolus marg = MargolusFile::readMargolus(load_file);
+        std::unique_ptr<Margolus> loadedMargPtr = MargolusFile::readMargolus(loadFile);
+        Margolus& marg = *loadedMargPtr;
         Margolus::stepDirection direction = Margolus::FORWARD;
 
         if (iter < 0) {
@@ -76,26 +76,33 @@ int main(int argc, char **argv) {
         }
 
         for (long i = 0; i < iter; i++) {
-            if (run_animated and renderer == "ANSI") {
-                MargolusRender::basicANSI(marg.getGrid(), odd_flips_color and marg.getOffset());
+            if (runAnimated and renderer == "ANSI") {
+                MargolusRender::basicANSI(marg.getGrid(), oddFlipsColor and marg.getOffset());
                 usleep(1000 * 75);
             }
             marg.step(direction);
         }
 
-        if (renderer == "ANSI" and !output_to_stdout)
-            MargolusRender::basicANSI(marg.getGrid(), odd_flips_color and marg.getOffset());
+        if (renderer == "ANSI" and !outputToStdout)
+            MargolusRender::basicANSI(marg.getGrid(), oddFlipsColor and marg.getOffset());
 
-        MargolusFile::writeMargolus(marg, save_file);
+        MargolusFile::writeMargolus(marg, saveFile);
 
+    } catch (const popl::invalid_option &ex) {
+        std::cerr << "\x1B[93;01mArgument error\x1B[0m: " << ex.what() << std::endl;
+        return 1;
 
-    } catch (const std::runtime_error &re) {
-        std::cerr << "\x1B[93;01mError\x1B[0m: " << re.what() << std::endl;
+    } catch (const std::invalid_argument &ex) {
+        std::cerr << "\x1B[93;01mArgument error\x1B[0m: " << ex.what() << std::endl;
+        return 1;
+
+    } catch (const std::runtime_error &ex) {
+        std::cerr << "\x1B[93;01mRuntime error\x1B[0m: " << ex.what() << std::endl;
         return 2;
 
     } catch (const std::exception &ex) {
-        std::cerr << "\x1B[91;01mException\x1B[0m: " << ex.what() << std::endl;
-        return 1;
+        std::cerr << "\x1B[91;01mCaught exception\x1B[0m: " << ex.what() << std::endl;
+        return 3;
     }
 
     return 0;
