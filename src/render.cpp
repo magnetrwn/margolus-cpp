@@ -20,7 +20,7 @@ void MargolusRender::basicANSI(const std::deque<std::deque<bool>>& grid, const b
     upStr = std::to_string(up);
     downStr = std::to_string(down);
     commentPadding = std::string(
-        std::max(1, static_cast<int>(width - upStr.size() - 1 - downStr.size() - 1 - comment.size())), ' ');
+        std::max(0, static_cast<int>(width - upStr.size() - 1 - downStr.size() - 1 - comment.size())), ' ');
 
     std::cout << "\x1B[97;01m"
               << upStr

@@ -77,16 +77,26 @@ int main(int argc, char **argv) {
 
         for (long i = 0; i < iter; i++) {
             if (runAnimated and renderer == "ANSI") {
-                MargolusRender::basicANSI(marg.getGrid(), oddFlipsColor and marg.getOffset());
+                MargolusRender::basicANSI(
+                    marg.getGrid(),
+                    oddFlipsColor and marg.getOffset(),
+                    inputToStdin ? "(STDIN)" : loadFile
+                );
                 usleep(1000 * 75);
             }
             marg.step(direction);
         }
 
         if (renderer == "ANSI" and !outputToStdout)
-            MargolusRender::basicANSI(marg.getGrid(), oddFlipsColor and marg.getOffset());
+            MargolusRender::basicANSI(
+                marg.getGrid(),
+                oddFlipsColor and marg.getOffset(),
+                inputToStdin ? "(STDIN)" : loadFile
+            );
 
-        MargolusFile::writeMargolus(marg, saveFile);
+        if (!saveFile.empty() or outputToStdout)
+            MargolusFile::writeMargolus(marg, saveFile);
+
 
     } catch (const popl::invalid_option &ex) {
         std::cerr << "\x1B[93;01mArgument error\x1B[0m: " << ex.what() << std::endl;
