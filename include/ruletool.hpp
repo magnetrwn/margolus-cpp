@@ -18,8 +18,8 @@ private:
     //       {0, 0, 1, 0} -> ruleset[2]
     //       ...
 
+    // Avoid using as ruleset (this is used to represent the rising binary sequence)
     static constexpr std::array<std::array<bool, 4>, 16> sequential_binary = {{
-        // Avoid using as ruleset (this is used to represent the rising binary sequence)
         {0, 0, 0, 0},
         {0, 0, 0, 1},
         {0, 0, 1, 0},
@@ -35,6 +35,26 @@ private:
         {1, 1, 0, 0},
         {1, 1, 0, 1},
         {1, 1, 1, 0},
+        {1, 1, 1, 1}
+    }};
+
+    // From: https://dmishin.github.io/js-revca/index.html#
+    static constexpr std::array<std::array<bool, 4>, 16> rotations_3_ruleset = {{
+        {0, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 0, 1},
+        {1, 0, 1, 0},
+        {1, 0, 0, 0},
+        {0, 0, 1, 1},
+        {1, 0, 0, 1},
+        {1, 0, 1, 1},
+        {0, 0, 1, 0},
+        {0, 1, 1, 0},
+        {1, 1, 0, 0},
+        {1, 1, 1, 0},
+        {0, 1, 0, 1},
+        {0, 1, 1, 1},
+        {1, 1, 0, 1},
         {1, 1, 1, 1}
     }};
 
@@ -76,8 +96,28 @@ private:
         {1, 1, 1, 1}
     }};
 
+    // Tron is basically sequential with 0 and 15 inverted
+    static constexpr std::array<std::array<bool, 4>, 16> tron_ruleset = {{
+        {1, 1, 1, 1},
+        {0, 0, 0, 1},
+        {0, 0, 1, 0},
+        {0, 0, 1, 1},
+        {0, 1, 0, 0},
+        {0, 1, 0, 1},
+        {0, 1, 1, 0},
+        {0, 1, 1, 1},
+        {1, 0, 0, 0},
+        {1, 0, 0, 1},
+        {1, 0, 1, 0},
+        {1, 0, 1, 1},
+        {1, 1, 0, 0},
+        {1, 1, 0, 1},
+        {1, 1, 1, 0},
+        {0, 0, 0, 0}
+    }};
+
 public:
-    enum knownRuleset { _BINARY, BILLIARD_BALL, CRITTERS };
+    enum knownRuleset { _BINARY, ROTATIONS_3, BILLIARD_BALL, CRITTERS, TRON };
     static const std::array<std::array<bool, 4>, 16> generateTransforms(knownRuleset name);
 };
 
