@@ -10,7 +10,7 @@ std::vector<std::string> TXTUtil::readTXT(const std::string &filename) {
 
     std::string line;
     while (std::getline(file, line)) {
-        destVector.push_back(line);
+        destVector.emplace_back(line);
     }
 
     return destVector;
@@ -24,13 +24,13 @@ std::vector<std::string> TXTUtil::splitLineTXT(const std::string& line, const ch
     secondIdx = line.find(separator);
 
     while (secondIdx != std::string::npos) {
-        splitLine.push_back(line.substr(firstIdx, secondIdx - firstIdx));
+        splitLine.emplace_back(line.substr(firstIdx, secondIdx - firstIdx));
         firstIdx = secondIdx + 1;
         secondIdx = line.find(separator, firstIdx);
     }
 
     if (firstIdx < line.size())
-        splitLine.push_back(line.substr(firstIdx));
+        splitLine.emplace_back(line.substr(firstIdx));
 
     return splitLine;
 }
