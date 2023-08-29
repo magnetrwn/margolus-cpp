@@ -1,6 +1,6 @@
 #include "render.hpp"
 
-void MargolusRender::basicANSI(const std::deque<std::deque<bool>>& grid, const bool invert, const std::string& comment) {
+void MargolusRender::colorANSI(const std::deque<std::deque<bool>>& grid, const bool invert, const std::string& comment) {
     size_t up = 0, down = 0, width = grid[0].size(), height = grid.size();
     std::string upStr, downStr, commentPadding;
 

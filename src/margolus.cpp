@@ -19,9 +19,7 @@ Margolus::Margolus(const size_t width, const size_t height, const std::array<std
 
     grid.resize(height_);
     for (size_t i = 0; i < height_; i++)
-        grid[i].resize(width_);
-
-    fillRect(0, 0, width_ - 1, height_ - 1, DOWN);
+        grid[i].resize(width_, false);
 }
 
 const std::deque<std::deque<bool>>& Margolus::getGrid() const {
@@ -115,7 +113,7 @@ void Margolus::step(stepDirection move) {
                 grid[(offset_ + i + 1) % height_][(offset_ + j + 1) % width_]
             }};
 
-            //MargolusRender::basicANSI(grid);
+            //MargolusRender::colorANSI(grid);
             //std::cout << "before: " << active[0] << ", " << active[1] << ", " << active[2] << ", " << active[3] << std::endl;
 
             if (move == FORWARD)
