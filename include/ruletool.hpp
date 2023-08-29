@@ -6,7 +6,7 @@
 
 
 class MargolusRuletool {
-private:
+protected:
     // Here are the conversions for the rulesets:
     // 1 2   Each block is separated in the following
     // 3 4   four bools, in this order.

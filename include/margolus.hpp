@@ -14,8 +14,16 @@
 #include "util.hpp"
 
 
+/* The grid type should change based on what the dev wants to use, including:
+ *  - std::deque<std::deque<bool>>
+ *  - std::deque<std::bitset<width_>>
+ *  - std::array<std::array<bool, width_>, height_>
+ *  - std::array<std::bitset<width_>, height_>
+ * It's quite troublesome, because STL arrays and bitsets have compile time size.
+ * Check the `grid-performance` branch for improvements on this, by using custom DSs.
+ */
 class Margolus {
-private:
+protected:
     const size_t width_, height_;
     size_t offset_;
     const std::array<std::array<bool, 4>, 16> transforms_;
