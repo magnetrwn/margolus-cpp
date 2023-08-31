@@ -96,8 +96,8 @@ int main(int argc, char **argv) {
             direction = Margolus::BACKWARD;
         }
 
-        if (runAnimated)
-            for (long i = 0; i < iter; i++) {
+        for (long i = 0; i < iter; i++) {
+            if (runAnimated) {
                 if (renderer == "ANSI") {
                     MargolusRender::colorANSI(
                         marg.getGrid(),
@@ -106,8 +106,9 @@ int main(int argc, char **argv) {
                     );
                     usleep(1000 * 75);
                 }
-                marg.step(direction);
             }
+            marg.step(direction);
+        }
 
         if (renderer == "ANSI" and !outputToStdout)
             MargolusRender::colorANSI(
