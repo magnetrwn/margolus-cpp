@@ -30,7 +30,7 @@ std::unique_ptr<Margolus> MargolusFile::readMargolus(const std::string &filename
         for (size_t j = 0; j < width; j++) {
             if (input[i][j] != '.' and input[i][j] != '$')
                 throw std::runtime_error("Error while parsing grid from file.");
-            marg.fillPoint(j, i - 2, (input[i][j] == '$') ? Margolus::UP : Margolus::DOWN);
+            marg[i-2][j] = input[i][j] == '$';
         }
 
     return std::make_unique<Margolus>(std::move(marg));
@@ -38,10 +38,11 @@ std::unique_ptr<Margolus> MargolusFile::readMargolus(const std::string &filename
 
 std::vector<std::string> MargolusFile::fileStringsGenerator(const Margolus& marg) {
     std::vector<std::string> output;
+    size_t width = marg.getSize().first, height = marg.getSize().second;
 
     std::string firstRow;
-    firstRow.append(std::to_string(marg.getSize().first) + ":");
-    firstRow.append(std::to_string(marg.getSize().second) + ":");
+    firstRow.append(std::to_string(width) + ":");
+    firstRow.append(std::to_string(height) + ":");
     firstRow.append(std::to_string(marg.getOffset()));
     output.emplace_back(firstRow);
 
@@ -54,10 +55,10 @@ std::vector<std::string> MargolusFile::fileStringsGenerator(const Margolus& marg
     }
     output.emplace_back(secondRow);
 
-    for (const std::deque<bool>& row : marg.getGrid()) {
+    for (size_t i = 0; i < height; i++) {
         std::string outputRow;
-        for (bool point : row)
-            outputRow.append(point ? "$" : ".");
+        for (size_t j = 0; j < width; j++)
+            outputRow.append(marg[i][j] ? "$" : ".");
         output.emplace_back(outputRow);
     }
 

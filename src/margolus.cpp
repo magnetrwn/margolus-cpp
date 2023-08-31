@@ -17,13 +17,19 @@ Margolus::Margolus(const size_t width, const size_t height, const std::array<std
     if (width_ > MAX_SCREEN_ANY or height_ > MAX_SCREEN_ANY)
         throw std::runtime_error("Width and/or height too big.");
 
-    grid.resize(height_);
-    for (size_t i = 0; i < height_; i++)
-        grid[i].resize(width_, false);
+    grid = std::make_unique<RB::RuntimeBitset<>[]>(width_);
+
+    for (size_t i = 0; i < width_; i++) {
+        grid[i] = RB::RuntimeBitset<>(height_, false);
+    }
 }
 
-const std::deque<std::deque<bool>>& Margolus::getGrid() const {
-    return grid;
+RB::RuntimeBitset<>& Margolus::operator[](const size_t y) {
+    return grid[y];
+}
+
+const RB::RuntimeBitset<>& Margolus::operator[](const size_t y) const {
+    return grid[y];
 }
 
 const std::pair<size_t, size_t> Margolus::getSize() const {
@@ -76,8 +82,8 @@ void Margolus::fillRect(size_t x1, size_t y1, size_t x2, size_t y2, const fillSt
             }
 }
 
-void Margolus::fillPoint(size_t x1, size_t y1, const fillState state, const double noise) {
-    fillRect(x1, y1, x1, y1, state, noise);
+void Margolus::fillPoint(size_t x, size_t y, const fillState state, const double noise) {
+    fillRect(x, y, x, y, state, noise);
 }
 
 void Margolus::applyTransforms(std::array<bool, 4>& block, const bool invert) {
