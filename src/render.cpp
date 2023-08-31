@@ -1,13 +1,13 @@
 #include "render.hpp"
 
-void MargolusRender::colorANSI(const std::deque<std::deque<bool>>& grid, const bool invert, const std::string& comment) {
-    size_t up = 0, down = 0, width = grid[0].size(), height = grid.size();
+void MargolusRender::colorANSI(const Margolus& marg, const bool invert, const std::string& comment) {
+    size_t up = 0, down = 0, width = marg.getSize().first, height = marg.getSize().second;
     std::string upStr, downStr, commentPadding;
 
     std::cout << "\033[2J\033[H";
     for (size_t i = 0; i < height; i++) {
         for (size_t j = 0; j < width; j++) {
-            if ((invert and !grid[i][j]) or (!invert and grid[i][j])) {
+            if ((invert and !marg[i][j]) or (!invert and marg[i][j])) {
                 std::cout << "\x1B[97;01m$\x1B[0m";
                 up++;
             } else {

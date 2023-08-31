@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
             for (long i = 0; i < iter; i++) {
                 if (renderer == "ANSI") {
                     MargolusRender::colorANSI(
-                        marg.getGrid(),
+                        marg,
                         oddFlipsColor and marg.getOffset(),
                         inputToStdin ? "(STDIN)" : loadFile
                     );
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 
         if (renderer == "ANSI" and !outputToStdout)
             MargolusRender::colorANSI(
-                marg.getGrid(),
+                marg,
                 oddFlipsColor and marg.getOffset(),
                 inputToStdin ? "(STDIN)" : loadFile
             );

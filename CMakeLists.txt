@@ -5,6 +5,7 @@ file(GLOB PROJECT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/lib/popl/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lib/runtime-bitset-cpp/*.hpp"
 )
 
 if(MSVC)
@@ -25,6 +26,7 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC include
     PUBLIC lib/popl
+    PUBLIC lib/runtime-bitset-cpp
 )
 target_link_libraries(
     ${PROJECT_NAME}
