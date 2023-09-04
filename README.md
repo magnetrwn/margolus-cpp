@@ -1,5 +1,7 @@
 # Margolus CPP: Reversible cellular automaton simulator
 
+## *WARNING: OBSOLETE*
+
 [![CodeFactor](https://www.codefactor.io/repository/github/magnetrwn/margolus-cpp/badge)](https://www.codefactor.io/repository/github/magnetrwn/margolus-cpp)
 
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
@@ -57,12 +59,15 @@ int main() {
     // Fill a rectangular region with random cells
     marg.fillRect(2, 2, 7, 7, Margolus::NOISE, 0.8);
 
-    // Fill a rectangular region with alive cells
-    marg.fillRect(3, 3, 6, 6, Margolus::UP);
+    // Fill a specific point by swapping its value
+    marg.fillPoint(3, 3, 6, 6, Margolus::TOGGLE);
+
+    // You can also access the grid directly through indexes
+    marg[3][8] = true;
 
     // Display the initial grid using the render functionality
     std::cout << "Initial Grid:" << std::endl;
-    MargolusRender::basicANSI(marg.getGrid());
+    MargolusRender::basicANSI(marg);
 
     // Perform 20 forward steps
     for (size_t i = 0; i < 20; i++)
@@ -70,7 +75,7 @@ int main() {
 
     // Show current grid
     std::cout << "Grid after 20 forward steps:" << std::endl;
-    MargolusRender::basicANSI(marg.getGrid(), marg.getOffset());
+    MargolusRender::basicANSI(marg, marg.getOffset());
 
     // Perform 20 backward steps
     for (size_t i = 0; i < 20; i++)
@@ -78,7 +83,7 @@ int main() {
 
     // Show current grid
     std::cout << "Grid after 20 backward steps:" << std::endl;
-    MargolusRender::basicANSI(marg.getGrid(), marg.getOffset());
+    MargolusRender::basicANSI(marg, marg.getOffset());
 
 
     return 0;
