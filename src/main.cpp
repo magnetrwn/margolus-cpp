@@ -30,6 +30,7 @@ int main(int argc, char **argv) {
 
     size_t newWidth = DEFAULT_NEW_WIDTH;
     size_t newHeight = DEFAULT_NEW_HEIGHT;
+    size_t threads = 1;
 
     long iter = 0;
 
@@ -52,6 +53,8 @@ int main(int argc, char **argv) {
     options.add<popl::Value<std::string>>("r", "render", "Engine to use to render grid.", renderer, &renderer);
     options.add<popl::Switch>("o", "odd-flip", "Flip render colors on odd iterations.", &oddFlipsColor);
     options.add<popl::Switch>("a", "animated", "Run with a 75ms step animation.", &runAnimated);
+
+    options.add<popl::Value<size_t>>("t", "threads", "Number of threads to use.", threads, &threads);
 
     // Arguments: new grid creation
 
