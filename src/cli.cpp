@@ -13,7 +13,6 @@ MargolusCLI::MargolusCLI()
       inputToStdin(false),
       outputToStdout(false),
       oddFlipsColor(false),
-      threads(1),
       iter(0) {
 
     options.add<popl::Switch>("h", "help", "Display help message.", &showHelp);
@@ -32,8 +31,6 @@ MargolusCLI::MargolusCLI()
     options.add<popl::Value<std::string>>("r", "render", "Engine to use to render grid.", renderer, &renderer);
     options.add<popl::Switch>("o", "odd-flip", "Flip render colors on odd iterations.", &oddFlipsColor);
     options.add<popl::Switch>("a", "animated", "Run with a 75ms step animation.", &runAnimated);
-
-    options.add<popl::Value<size_t>>("t", "threads", "Number of threads to use.", threads, &threads);
 }
 
 void MargolusCLI::checkParse(int argc, char **argv) {

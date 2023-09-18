@@ -19,7 +19,7 @@ protected:
     //       ...
 
     // Avoid using as ruleset (this is used to represent the rising binary sequence)
-    static constexpr std::array<std::array<bool, 4>, 16> sequential_binary = {{
+    static constexpr std::array<std::array<bool, 4>, 16> SEQUENTIAL_BINARY = {{
         {0, 0, 0, 0},
         {0, 0, 0, 1},
         {0, 0, 1, 0},
@@ -39,7 +39,7 @@ protected:
     }};
 
     // From: https://dmishin.github.io/js-revca/index.html#
-    static constexpr std::array<std::array<bool, 4>, 16> rotations_3_ruleset = {{
+    static constexpr std::array<std::array<bool, 4>, 16> ROTATIONS_3_RULESET = {{
         {0, 0, 0, 0},
         {0, 1, 0, 0},
         {0, 0, 0, 1},
@@ -58,7 +58,7 @@ protected:
         {1, 1, 1, 1}
     }};
 
-    static constexpr std::array<std::array<bool, 4>, 16> critters_ruleset = {{
+    static constexpr std::array<std::array<bool, 4>, 16> CRITTERS_RULESET = {{
         {1, 1, 1, 1},
         {1, 1, 1, 0},
         {1, 1, 0, 1},
@@ -77,7 +77,7 @@ protected:
         {0, 0, 0, 0}
     }};
 
-    static constexpr std::array<std::array<bool, 4>, 16> billiard_ball_ruleset = {{
+    static constexpr std::array<std::array<bool, 4>, 16> BILLIARD_BALL_RULESET = {{
         {0, 0, 0, 0},
         {1, 0, 0, 0},
         {0, 1, 0, 0},
@@ -97,7 +97,7 @@ protected:
     }};
 
     // Tron is basically sequential with 0 and 15 inverted
-    static constexpr std::array<std::array<bool, 4>, 16> tron_ruleset = {{
+    static constexpr std::array<std::array<bool, 4>, 16> TRON_RULESET = {{
         {1, 1, 1, 1},
         {0, 0, 0, 1},
         {0, 0, 1, 0},

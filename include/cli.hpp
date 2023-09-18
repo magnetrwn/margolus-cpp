@@ -29,8 +29,6 @@ public:
     bool outputToStdout = false;
     bool oddFlipsColor = false;
 
-    size_t threads = 1;
-
     long iter = 0;
 };
 
