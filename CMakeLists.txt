@@ -8,6 +8,7 @@ find_package(OpenGL REQUIRED)
 
 file(GLOB PROJECT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.tpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/lib/popl/*.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/lib/runtime-bitset-cpp/*.hpp"
