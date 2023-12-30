@@ -1,17 +1,12 @@
 # Margolus CPP: Reversible cellular automaton simulator
 
-## *WARNING: OBSOLETE*
-
 [![CodeFactor](https://www.codefactor.io/repository/github/magnetrwn/margolus-cpp/badge)](https://www.codefactor.io/repository/github/magnetrwn/margolus-cpp)
 
 Margolus CPP (`margolus-cpp`) is a simulator for different reversible cellular automata based on the [Margolus neighborhood](https://en.wikipedia.org/wiki/Block_cellular_automaton).
 
 The behaviour of the simulator can be controlled by setting the ruleset used to control how each 2x2 block is changed for each iteration.
 
-## Asciinema Demo
-The following demo shows Margolus CPP running with a Critters ruleset (you can see `demo1()` and `demo2()` in `src/main.cpp`, alternating every few seconds).
-
-[![asciicast](https://asciinema.org/a/qB18st3xDxeRCZtGxPj10cpAW.svg)](https://asciinema.org/a/qB18st3xDxeRCZtGxPj10cpAW)
+![Demo](margolus-demo.gif)
 
 ## Build
 
@@ -91,7 +86,7 @@ int main() {
 
 ```
 
-Right now the only renderer is `MargolusRender::basicANSI()`, which will output to STDOUT with nice colors, but other renderers will be added soon (SDL or Cairo sound good, maybe with GTK3 too).
+Right now the only renderer is `MargolusRender::basicANSI()`, which will output to STDOUT with nice colors, but other renderers will be added *maybe?* (SDL or Cairo sound good, maybe with GTK3 too).
 
 ## Contributing
 
