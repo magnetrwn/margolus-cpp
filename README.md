@@ -13,9 +13,11 @@ The behaviour of the simulator can be controlled by setting the ruleset used to 
 To build Margolus CPP on Linux systems, you can run `./build.sh` from project root.
 Other platforms such as Windows might require slight modifications, such as in the use of `<unistd.h>` for `usleep()`, and will need you to manually run `cmake` inside the build folder.
 
-## Configuration
+## Storage
 
-At the moment, the only config file is `margolus.ini`, which contains the transformations list to apply on a block that is found to match a transform condition (for now only three alive cells in a block, but will make into a proper INI soon).
+Simulations can be loaded and saved, stored in an easily readable and understandable format. They contain simulation parameters and the gamerule used, as well as the status of the grid.
+
+Check the `build/examples` folder to look at actual saves.
 
 ## Usage as CLI utility
 
@@ -34,9 +36,11 @@ Available command line options:
 ```
 Running `./margolus` with no arguments will just display the state of the grid, with default width and height, without stepping the simulation, but additional parameters can change the behaviour of the program.
 
-For example, when running `./margolus -i-100 -a`, a 100 step animation will run backward steps of the grid using the default ruleset from `margolus.ini`.
+For example, when running `./margolus -i-100 -a`, a 100 step animation will run **backward** steps of the grid.
 
 ## Usage as library
+
+**Note:** I haven't looked at this for a while, so this is likely *outdated*.
 
 Here is a sample program using Margolus CPP.
 
@@ -85,8 +89,6 @@ int main() {
 }
 
 ```
-
-Right now the only renderer is `MargolusRender::basicANSI()`, which will output to STDOUT with nice colors, but other renderers will be added *maybe?* (SDL or Cairo sound good, maybe with GTK3 too).
 
 ## Contributing
 
