@@ -16,11 +16,11 @@ endif()
 
 add_executable(${PROJECT_NAME} ${PROJECT_FILES})
 
-add_compile_definitions(-DMAX_SCREEN_ANY=16384)
-add_compile_definitions(-DDEFAULT_NEW_WIDTH=80)
-add_compile_definitions(-DDEFAULT_NEW_HEIGHT=48)
-add_compile_definitions(-DDEFAULT_RENDERER=\"ANSI\")
-add_compile_definitions(-DDEFAULT_NEW_RULESET=\"BILLIARD_BALL\")
+add_definitions(-DMAX_SCREEN_ANY=16384)
+add_definitions(-DDEFAULT_NEW_WIDTH=80)
+add_definitions(-DDEFAULT_NEW_HEIGHT=48)
+add_definitions(-DDEFAULT_RENDERER=\"ANSI\")
+add_definitions(-DDEFAULT_NEW_RULESET=\"BILLIARD_BALL\")
 
 target_include_directories(
     ${PROJECT_NAME}
